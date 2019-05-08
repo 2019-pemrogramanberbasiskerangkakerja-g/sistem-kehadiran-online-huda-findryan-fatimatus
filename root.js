@@ -58,9 +58,26 @@ var mahasiswa = require('./controller/mahasiswa.js');
 root.use('/mahasiswa', mahasiswa);
 //----endmahasiswa
 
+var api = require('./controller/api.js');
+root.use('/api', api);
+
 //dashboard
 root.get('/dashboard', function(request, response) {
 	response.sendFile(path.join(__dirname + '/login.html'));
 });
+root.post('/login2', function (req, res) {
+    var params = req.body;
+    console.log(params.username);
+   db.query('select * from user where username=? and password=?',
+   [req.params.username,req.params.password], function (error, results, fields) {
+      if (error) throw error;
+      res.end(JSON.stringify(results));
+    });
+});
+
+//----api
+// var api = require('./controller/api.js');
+// root.use('/api', api);
+//----endmahasiswa
 
 module.exports = root;
