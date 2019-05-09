@@ -25,7 +25,7 @@ var db = mysql.createConnection({
   host     : 'localhost', //mysql database host name
   user     : 'root', //mysql database user name
   password : '', //mysql database password
-  database : 'safario2' //mysql database name
+  database : 'safario' //mysql database name
 });
 
 db.connect(function(err) {
@@ -166,14 +166,56 @@ root.post('/dosen/addkelas', function(request, response) {
     response.redirect('/dosen');
   });
 });
+
+root.get('/createJadwal', function(request, response) {
+ let sql = "SELECT * FROM matkul";
+ let query = db.query(sql, (err, results,fields) => {
+     if(err) throw err;
+         response.render('/dosen/index.njk',{results});
+ });
+});
+
+root.post('/TambahJadwal', function(request, response) {
+ var matkul = request.body.matkul;
+ var pertemuan_ke = request.body.pertemuan_ke;
+ var waktu_awal = request.body.waktu_awal;
+ var waktu_akhir = request.body.waktu_akhir;
+ var ruangan = request.body.ruangan;
+
+ let sql = "INSERT  INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
+ let query = db.query(sql, (err, results) => {
+     if(err) throw err;
+     response.redirect('/dosen');
+ });
+});
+
+root.get('/createPeserta', function(request, response) {
+ let sql = "SELECT * FROM user WHERE role_user = '2'";
+ let query = db.query(sql, (err, results,fields) => {
+     if(err) throw err;
+         response.render('/dosen/index.njk',{results});
+ });
+});
+
+root.post('/TambahPeserta', function(request, response) {
+ var matkul = request.body.matkul;
+ var user = request.body.user;
+
+ let sql = "INSERT  INTO `daftar_peserta`(`id_matkul`,`id_user`) values ('"+matkul+"','"+user+"')";
+ let query = db.query(sql, (err, results) => {
+     if(err) throw err;
+     response.redirect('/dosen');
+ });
+});
 //-------------------ENDDOSEN---------------------
 
 //-------------------MAHASISWA------------------
 root.get('/mahasiswa', function(request, response) {
-  var username = request.session.username;
-  var nama = request.session.nama; 
-  var id = request.session.id_user;
-  let sql = "SELECT * FROM matkul where nrp_nip = '"+id+"'";
+    var username = request.session.nrp_nip;
+    var nama = request.session.nama_user; 
+    var id = request.session.id_user;
+  //let sql = "SELECT DISTINCT matkul.nama_matkul,matkul.kelas,daftar_peserta.* FROM matkul INNER JOIN daftar_peserta ON (matkul.id_matkul = daftar_peserta.id_matkul ) where id_user = '"+id+"'";
+  let sql = "SELECT m.nama_matkul,m.kelas,dp.* FROM matkul m , daftar_peserta dp where m.id_matkul = dp.id_matkul";
   let query = db.query(sql, (err, results,fields) => {
     if(err){
       console.log(err);
@@ -184,13 +226,22 @@ root.get('/mahasiswa', function(request, response) {
     //response.render('mahasiswa/index.njk',{username,nama});
   });
 
-root.post('/mahasiswa/absen', function(request, response) {
+root.get('/mahasiswa/absen', function(request, response) { 
+ var id = request.session.id_user;
+ let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m";
+ let query = db.query(sql, (err, results,fields) => {
+     if(err) throw err;
+         response.render('mahasiswa/absen',{results});
+ });
+});
+
+root.post('/mahasiswa/absensi', function(request, response) {
   var id = request.body.id_user;
-  var matkul = request.body.id_matkul;
+  var matkul = request.body.id_tran_matkul;
   var status = request.body.status;
 
-  let sql = "INSERT INTO `absen`(`id_user`,`id_matkul`,`status`) values (`"+id+"`,`"+matkul+"`,`"+status+"`) ";
-  let query = db.query(sql, (err, results) => {
+  let sql = "INSERT INTO `transaksi_user`(`id_user`,`id_tran_matkul`,'waktu',`status`) values (`"+id+"`,`"+matkul+"`,CURRENT_TIME(),`"+status+"`) ";
+  let query = db.query(sql, (err, results,fields) => {
     if(err){
       console.log(err);
     }
@@ -198,34 +249,6 @@ root.post('/mahasiswa/absen', function(request, response) {
   });
 });
 
-<<<<<<< HEAD
-//----login
-var auth = require('./controller/auth.js');
-root.use('/auth', auth);
-//----endlogin
-
-//----login
-var register = require('./controller/register.js');
-root.use('/register', register);
-//----endlogin
-
-//----dosen
-var dosen = require('./controller/dosen.js');
-root.use('/dosen', dosen);
-//----enddosen
-
-//----mahasiswa
-var mahasiswa = require('./controller/mahasiswa.js');
-root.use('/mahasiswa', mahasiswa);
-//----endmahasiswa
-
-var api = require('./controller/api.js');
-root.use('/api', api);
-
-//dashboard
-root.get('/dashboard', function(request, response) {
-	response.sendFile(path.join(__dirname + '/login.html'));
-=======
 //-------------------ENDMAHASISWA------------------
 
 //-------------------API---------------------------
@@ -327,17 +350,9 @@ root.get('/tambahpeserta/:id_matkul/:nrp', function (req, res) {
         });
     }
   });
->>>>>>> master
 });
-root.post('/login2', function (req, res) {
-    var params = req.body;
-    console.log(params.username);
-   db.query('select * from user where username=? and password=?',
-   [req.params.username,req.params.password], function (error, results, fields) {
-      if (error) throw error;
-      res.end(JSON.stringify(results));
-    });
-});
+
+
 
 //----api
 // var api = require('./controller/api.js');

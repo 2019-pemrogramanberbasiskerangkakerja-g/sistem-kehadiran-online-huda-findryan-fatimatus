@@ -20,8 +20,12 @@
 					<thead>
 						<tr>
 							<th scope="col">No</th>
-							<th scope="col">Mata Kuliah</th>
-							<th scope="col">Kelas</th>
+							<th scope="col">Nama</th>
+							<th scope="col">Pertemuan</th>
+							<th scope="col">Waktu Awal</th>
+							<th scope="col">Waktu Akhir</th>
+							<th scope="col">Ruangan</th>
+							<th scope="col">Option</th>
 						</tr>
 					</thead>
 
@@ -30,9 +34,49 @@
 						<tr>
 							<!-- <th scope="row">1</th> -->
 							<td class="counterCell"> </td>
-							<td><a href="/mahasiswa/absen">{{ matkul.nama_matkul }}</a></td>
-							<td>{{matkul.kelas}}</td>
+							<td>{{matkul.nama_matkul}}</a></td>
+							<td>{{matkul.pertemuan_ke}}</td>
+							<td>{{matkul.waktu_awal}}</td>
+							<td>{{matkul.waktu_akhir}}</td>
+							<td>{{matkul.ruangan}}</td>
+							<td>
+								<button class="btn btn-primary  href="" data-toggle="modal" data-target="myModalAdd{{matkul.id_tran_matkul}}"">Absen</button>
+								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPeserta"">Sakit</button>
+							</td>
 						</tr>
+						<form action="/absensi" method="post">
+							<div class="modal fade" id="myModalAdd{{matkul.id_tran_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Absensi Online</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											 <strong>Anda akan melakukan absensi apakah anda benar bahwa ini anda yang sesungguhnya?</strong>
+											<div class="form-group">
+												<input type="text" name="id_user" class="form-control" value="{{id}}">
+											</div>
+
+											<div class="form-group">
+												<input type="text" name="id_matkul" class="form-control" value="{{matkul.id_tran_matkul}}" >
+											</div>
+
+											<div class="form-group">
+												<input type="text" name="status" class="form-control" value="1" >
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="id" class="id_matkul">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Absen</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
 
 						{% endfor %}
 					</tbody>
@@ -42,7 +86,7 @@
 	</div>
 </section>
 <form action="/absensi" method="post">
-	<div class="modal fade" id="myModalAbsen{{matkul.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="myModalAdd{{matkul.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
