@@ -22,10 +22,10 @@ root.use(bodyParser.json());
 root.use(express.static(__dirname + '/assets'));
 
 var db = mysql.createConnection({
-  host     : 'localhost', //mysql database host name
-  user     : 'root', //mysql database user name
-  password : '', //mysql database password
-  database : 'safario' //mysql database name
+  host     : '157.230.42.89', //mysql database host name
+  user     : 'yayan', //mysql database user name
+  password : 'yayan123', //mysql database password
+  database : 'safario2' //mysql database name
 });
 
 db.connect(function(err) {
@@ -362,6 +362,6 @@ root.get('/tambahpeserta/:id_matkul/:nrp', function (req, res) {
 // root.use('/api', api);
 //----endmahasiswa
 
-root.listen(3000, '0.0.0.0', function() {
+root.listen(3000, function() {
   console.log('Listening to port:  ' + 3000);
 });
