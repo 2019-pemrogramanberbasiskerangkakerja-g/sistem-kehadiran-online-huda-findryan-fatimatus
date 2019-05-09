@@ -226,12 +226,14 @@ root.get('/mahasiswa', function(request, response) {
     //response.render('mahasiswa/index.njk',{username,nama});
   });
 
-root.get('/mahasiswa/absen', function(request, response) { 
+root.get('/mahasiswa/absen/:id_matkul', function(request, response) { 
  var id = request.session.id_user;
- let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m";
+ var matkul = request.params.id_matkul;
+ console.log(matkul);
+ let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m where m.id_matkul = '"+matkul+"'";
  let query = db.query(sql, (err, results,fields) => {
      if(err) throw err;
-         response.render('mahasiswa/absen',{results});
+         response.render('mahasiswa/absen',{results,id});
  });
 });
 
@@ -239,14 +241,15 @@ root.post('/mahasiswa/absensi', function(request, response) {
   var id = request.body.id_user;
   var matkul = request.body.id_tran_matkul;
   var status = request.body.status;
+  var date = new Date();
 
-  let sql = "INSERT INTO `transaksi_user`(`id_user`,`id_tran_matkul`,'waktu',`status`) values (`"+id+"`,`"+matkul+"`,CURRENT_TIME(),`"+status+"`) ";
-  let query = db.query(sql, (err, results,fields) => {
-    if(err){
-      console.log(err);
-    }
-    response.redirect('mahasiswa/index.njk');
-  });
+  db.query('INSERT INTO transaksi_user (id_user,id_tran_matkul,waktu,status) values (?,?,?,?)',
+       [id,matkul,date,status], function (error, results, fields) {
+        if (error){
+          console.log(error);
+        }
+       response.redirect('/mahasiswa');
+      });
 });
 
 //-------------------ENDMAHASISWA------------------
