@@ -25,32 +25,32 @@
 4. Jalankan aplikasi dengan ``` node root.js ```
 
 ### Berikut List Api pada Aplikasi Kehadiran Online (Safario):
-* absen
+1. absen
   ``` POST /absen/RUANG/NRP ```
 
-* rekap kuliah per semester
+2. rekap kuliah per semester
   ``` GET /rekap/IDMATAKULIAH ```
 
-* rekap kuliah per pertemuan
+3. rekap kuliah per pertemuan
   ``` GET /rekap/IDMATAKULIAH/PERTEMUANKE ```
 
-* rekap per mahasiswa per kuliah
+4. rekap per mahasiswa per kuliah
   ``` GET /rekapmahasiswa/NRP/IDMATAKULIAH ```
 
-* rekap per mahasiswa per semester
+5. rekap per mahasiswa per semester
   ``` GET /rekapmahasiswa/NRP/IDSEMESTER ```
 
-* tambah user mhs baru
+6. tambah user mhs baru
   ``` POST /tambahmahasiswa ```
 sent via body: nrp, nama, password
 
-* tambah user mhs ke mata kuliah
+7. tambah user mhs ke mata kuliah
   ``` POST /tambahpeserta/IDMATAKULIAH/NRP ```
 
-* tambah mata kuliah baru
+8. tambah mata kuliah baru
   ``` POST /tambahmatkul ```
 sent via body: id mata kuliah, nama matakuliah, kelas
 
-* tambah jadwal pertemuan untuk kuliah
+9. tambah jadwal pertemuan untuk kuliah
 ``` POST /tambahjadwal ```
 sent via body: id mata kuliah, pertemuan ke, ruang, jam masuk, jam selesai
