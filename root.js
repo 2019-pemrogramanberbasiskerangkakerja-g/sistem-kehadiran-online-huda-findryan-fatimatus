@@ -255,6 +255,20 @@ root.post('/mahasiswa/absensi', function(request, response) {
 //-------------------ENDMAHASISWA------------------
 
 //-------------------API---------------------------
+root.get('/tabel/:nama_tabel', function (req, res) {
+  var nama_tabel = req.params.nama_tabel;
+  let sql = "SELECT * FROM "+nama_tabel+"";
+
+  db.query(sql, function (error, results, fields) {
+    if (error){
+      console.log(error);
+      res.status(500).json({ error: 'Tidak ada tabel yang dimaksudkan' });
+    }else{
+      res.status(200).json(results);
+    }
+  });
+});
+
 root.post('/login', function (req, res) {
   var user = req.body.nrp;
   var passw = req.body.password;
@@ -306,6 +320,7 @@ root.post('/tambahmatkul', function (req, res) {
   console.log(req.body);
   var nama_matkul = req.body.nama_matkul;
   var kelas = req.body.kelas;
+  var semester = req.body.semester;
   db.query('select id_matkul from matkul where nama_matkul=? and kelas=?',
    [nama_matkul,kelas], function (error, results, fields) {
     if (error){
@@ -315,8 +330,8 @@ root.post('/tambahmatkul', function (req, res) {
     if (results.length > 0){
       res.status(404).json({ error: 'Kelas telah ditambahkan' });
     }else{
-      db.query('INSERT INTO matkul (nama_matkul,kelas) values (?,?)',
-        [nama_matkul,kelas], function (error, results, fields) {
+      db.query('INSERT INTO matkul (nama_matkul,kelas,semester) values (?,?,?)',
+        [nama_matkul,kelas,semester], function (error, results, fields) {
           if (error){
             console.log(error);
             res.status(500).json({ error: 'Internal Server Error' });
@@ -394,6 +409,68 @@ root.post('/absen/:ruang/:nrp', function(request, response) {
 //  var waktu_akhir = request.body.waktu_akhir;
 //  var ruangan = request.body.ruangan;
 // });
+
+//rekap kuliah per semester
+root.get('/rekappersemester/:id_matkul', function (req, res) {
+  var id_matkul = req.params.id_matkul;
+
+  db.query('SELECT tm.id_matkul,tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan FROM transaksi_matkul AS tm JOIN matkul AS mat WHERE tm.id_matkul = mat.id_matkul AND mat.id_matkul=? ORDER BY tm.pertemuan_ke',
+   [id_matkul], function (error, results, fields) {
+    if (error){
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }else{
+      res.status(200).json(results);
+    }
+  });
+});
+
+//rekap kuliah per pertemuan
+root.get('/rekappertemuan/:id_matkul/:pertemuanke', function (req, res) {
+  var id_matkul = req.params.id_matkul;
+  var pertemuanke = req.params.pertemuanke;
+
+  db.query('SELECT tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan FROM transaksi_matkul AS tm JOIN matkul AS mat WHERE tm.id_matkul = mat.id_matkul AND mat.id_matkul=? AND tm.pertemuan_ke=? ORDER BY tm.pertemuan_ke',
+   [id_matkul,pertemuanke], function (error, results, fields) {
+    if (error){
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }else{
+      res.status(200).json(results);
+    }
+  });
+});
+
+//rekap mahasiswa per kuliah
+root.get('/rekapmahasiswa/:nrp/:id_matkul', function (req, res) {
+  var nrp = req.params.nrp;
+  var id_matkul = req.params.id_matkul;
+
+  db.query('SELECT * FROM USER AS us JOIN transaksi_user AS tu, transaksi_matkul AS tm, matkul AS m WHERE us.id_user = tu.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul = m.id_matkul AND us.nrp_nip=? AND m.id_matkul=?',
+   [nrp,id_matkul], function (error, results, fields) {
+    if (error){
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }else{
+      res.status(200).json(results);
+    }
+  });
+});
+
+//rekap mahasiswa per semester
+root.get('/rekapmahasiswasemester/:nrp/:id_semester', function (req, res) {
+  var nrp = req.params.nrp;
+  var id_semester = req.params.id_semester;
+  db.query('SELECT * FROM USER AS us JOIN transaksi_user AS tu, transaksi_matkul AS tm, matkul AS m WHERE us.id_user = tu.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul = m.id_matkul AND us.nrp_nip=? AND m.semester=?',
+   [nrp,id_semester], function (error, results, fields) {
+    if (error){
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }else{
+      res.status(200).json(results);
+    }
+  });
+});
 
 root.listen(3000, function() {
   console.log('Listening to port:  ' + 3000);

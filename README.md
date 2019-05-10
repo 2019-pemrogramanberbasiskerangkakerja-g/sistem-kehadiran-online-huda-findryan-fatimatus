@@ -24,33 +24,49 @@
  * Package mysql, ``` npm install mysql ```
 4. Jalankan aplikasi dengan ``` node root.js ```
 
+#### API Cek db:
+Terdapat 4 tabel user, daftar_peserta, matkul, transaksi_matkul, transaksi_user
+akses
+``` GET /tabel/(Masukan Nama Tabel) ```
+
 ### Berikut List Api pada Aplikasi Kehadiran Online (Safario):
 1. absen
-  ``` POST /absen/RUANG/NRP ```
+  ``` POST /absen/```
+sent via body: ruang, nrp
 
 2. rekap kuliah per semester
-  ``` GET /rekap/IDMATAKULIAH ```
+  ``` GET /rekappersemester/IDMATAKULIAH ```
+  ex: /rekappersemester/1
 
 3. rekap kuliah per pertemuan
-  ``` GET /rekap/IDMATAKULIAH/PERTEMUANKE ```
+  ``` GET /rekappertemuan/IDMATAKULIAH/PERTEMUANKE ```
+  ex: /rekappertemuan/1/1
 
 4. rekap per mahasiswa per kuliah
   ``` GET /rekapmahasiswa/NRP/IDMATAKULIAH ```
+  ex: /rekapmahasiswa/5115100022/1
 
 5. rekap per mahasiswa per semester
-  ``` GET /rekapmahasiswa/NRP/IDSEMESTER ```
+  ``` GET /rekapmahasiswasemester/NRP/SEMESTER ```
+  ex : rekapmahasiswasemester/5115100035/4
 
 6. tambah user mhs baru
   ``` POST /tambahmahasiswa ```
 sent via body: nrp, nama, password
 
 7. tambah user mhs ke mata kuliah
-  ``` POST /tambahpeserta/IDMATAKULIAH/NRP ```
+  ``` GET /tambahpeserta/IDMATAKULIAH/NRP ```
+  ex : tambahpeserta/1/5115100022
 
 8. tambah mata kuliah baru
   ``` POST /tambahmatkul ```
-sent via body: id mata kuliah, nama matakuliah, kelas
+sent via body: nama_matkul, kelas, semester
 
 9. tambah jadwal pertemuan untuk kuliah
 ``` POST /tambahjadwal ```
+##### BELUM BISA - kirim jam masih eror 
 sent via body: id mata kuliah, pertemuan ke, ruang, jam masuk, jam selesai
+
+10. Login
+``` POST /login ```
+sent via body: nrp, password
