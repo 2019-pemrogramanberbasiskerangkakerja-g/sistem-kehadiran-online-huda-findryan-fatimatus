@@ -18,7 +18,7 @@
  * Package express, ``` npm install express --save ```
  * Package cookie parser, ``` npm install cookie-parser ```
  * Package express session, ``` npm install express-session ```
- * Package body parser, ``` npm istall body-parser ```
+ * Package body parser, ``` npm install body-parser ```
  * Package md5, ``` npm install md5 ```
  * Package nunjucks, ``` npm install nunjucks ```
  * Package mysql, ``` npm install mysql ```
