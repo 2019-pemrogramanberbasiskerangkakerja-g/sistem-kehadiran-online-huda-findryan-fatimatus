@@ -355,12 +355,45 @@ root.get('/tambahpeserta/:id_matkul/:nrp', function (req, res) {
   });
 });
 
+//absen
+root.post('/absen/:ruang/:nrp', function(request, response) {
+  var ruangan = request.params.ruang;
+  var nrp_nip = request.params.nrp;
+  var status = "2";
+  var date = new Date();
 
+  db.query('SELECT u.nrp_nip, tm.ruangan,tm.id_tran_matkul FROM daftar_peserta d, matkul m, transaksi_matkul tm, user u WHERE m.id_matkul = d.id_matkul AND u.id_user=d.id_user AND tm.id_matkul = m.id_matkul AND u.nrp_nip=? AND tm.ruangan=?',
+   [nrp_nip,ruangan], function (error, results, fields) {
+    if (error){
+      console.log(error);
+      response.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (results.length == 0 ){
+      response.status(404).json({ error: 'Peserta tidak terdaftar dalam kelas' });
+    }else{
+      console.log(results);
+      var matkul = results[0].id_tran_matkul;
+      db.query('INSERT INTO transaksi_user (id_user,id_tran_matkul,waktu,status) values (?,?,?,?)',
+       [nrp_nip,matkul,date,status], function (error, results, fields) {
+          if (error){
+            console.log(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+          }else{
+            res.status(200).json({ OK: 'Berhasil melakukan absensi' });
+          }
+        });
+    }
+  });
+});
 
-//----api
-// var api = require('./controller/api.js');
-// root.use('/api', api);
-//----endmahasiswa
+//tambahjadwal
+// root.post('/tambahjadwal', function(request, response) {
+//  var id_matkul = request.body.id_matkul;
+//  var pertemuan_ke = request.body.pertemuan_ke;
+//  var waktu_awal = request.body.waktu_awal;
+//  var waktu_akhir = request.body.waktu_akhir;
+//  var ruangan = request.body.ruangan;
+// });
 
 root.listen(3000, function() {
   console.log('Listening to port:  ' + 3000);
