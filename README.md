@@ -37,19 +37,19 @@ sent via body: ruang, nrp
 
 2. rekap kuliah per semester
   ``` GET /rekappersemester/IDMATAKULIAH ```
-  ex: /rekappersemester/1
+ex: /rekappersemester/1
 
 3. rekap kuliah per pertemuan
   ``` GET /rekappertemuan/IDMATAKULIAH/PERTEMUANKE ```
-  ex: /rekappertemuan/1/1
+ex: /rekappertemuan/1/1
 
 4. rekap per mahasiswa per kuliah
   ``` GET /rekapmahasiswa/NRP/IDMATAKULIAH ```
-  ex: /rekapmahasiswa/5115100022/1
+ex: /rekapmahasiswa/5115100022/1
 
 5. rekap per mahasiswa per semester
   ``` GET /rekapmahasiswasemester/NRP/SEMESTER ```
-  ex : rekapmahasiswasemester/5115100035/4
+ex : rekapmahasiswasemester/5115100035/4
 
 6. tambah user mhs baru
   ``` POST /tambahmahasiswa ```
@@ -57,7 +57,7 @@ sent via body: nrp, nama, password
 
 7. tambah user mhs ke mata kuliah
   ``` GET /tambahpeserta/IDMATAKULIAH/NRP ```
-  ex : tambahpeserta/1/5115100022
+ex : tambahpeserta/1/5115100022
 
 8. tambah mata kuliah baru
   ``` POST /tambahmatkul ```
