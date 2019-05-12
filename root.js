@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var md5 = require('md5');
 var nunjucks  = require('nunjucks');
 var mysql      = require('mysql');
-var db = require("./db_config");
+var db = require("./db/db_config");
 var root = express();
 
 root.use(cookieParser());
