@@ -33,7 +33,7 @@ akses
 ### Berikut List Api pada Aplikasi Kehadiran Online (Safario):
 1. absen
   ``` POST /absen/```
-sent via body: ruang, nrp
+<br/>sent via body: ruang, nrp
 
 2. rekap kuliah per semester
   ``` GET /rekappersemester/IDMATAKULIAH ```
@@ -53,7 +53,7 @@ sent via body: ruang, nrp
 
 6. tambah user mhs baru
   ``` POST /tambahmahasiswa ```
-sent via body: nrp, nama, password
+<br/>sent via body: nrp, nama, password
 
 7. tambah user mhs ke mata kuliah
   ``` GET /tambahpeserta/IDMATAKULIAH/NRP ```
@@ -61,13 +61,13 @@ sent via body: nrp, nama, password
 
 8. tambah mata kuliah baru
   ``` POST /tambahmatkul ```
-sent via body: nama_matkul, kelas, semester
+<br/>sent via body: nama_matkul, kelas, semester
 
 9. tambah jadwal pertemuan untuk kuliah
 ``` POST /apitambahjadwal ```
-sent via body: matkul, pertemuan_ke, waktu_awal, waktu_akhir, ruangan
+<br/>sent via body: matkul, pertemuan_ke, waktu_awal, waktu_akhir, ruangan
 
 
 10. Login
 ``` POST /login ```
-sent via body: nrp, password
+<br/>sent via body: nrp, password
