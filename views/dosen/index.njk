@@ -26,81 +26,171 @@
 					<tbody>
 						{% for item in results %}
 						<tr>
-							<th scope="row">1</th>
+							<td class="counterCell"> </td>
 							<td>
 								<a href="">{{ item.nama_matkul }}</a>
 							</td>
 							<td>{{ item.kelas }}</td>
 							<td>
-								<button class="btn btn-warning">edit</button>
-								<button class="btn btn-danger">hapus</button>
-								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPeserta"">tambah peserta</button>
-								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPeserta"">tambah pertemuan</button>
+								<button class="btn btn-warning"  href="" data-toggle="modal" data-target="#myModalAddEdit{{item.id_matkul}}">edit</button>
+								<button class="btn btn-danger" href="" data-toggle="modal" data-target="#myModalAddDelete{{item.id_matkul}}">hapus</button>
+								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPeserta{{item.id_matkul}}"">tambah peserta</button>
+								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPertemuan{{item.id_matkul}}">tambah pertemuan</button>
 							</td>
 						</tr>
+						<form action="/dosen/addkelas" method="post">
+							<div class="modal fade" id="myModalAddEdit{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Edit Matkul</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											Mata Kuliah
+											<div class="form-group">
+												<input type="text" placeholder="Nama Mata Kuliah" name="nama_matkul" class="form-control" value="{{item.nama_matkul}}">
+											</div>
+											Kelas
+											<div class="form-group">
+												<input type="text" placeholder="Kelas" name="kelas" class="form-control" value="{{item.kelas}}">
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="id" class="id_matkul">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-warning">Edit</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						<form action="/dosen/addkelas" method="post">
+							<div class="modal fade" id="myModalAddDelete{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Edit Matkul</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											 <strong>Anda akan menghapus Mata Kuliah yang anda pilih ini yaitu {{item.nama_matkul}}</strong>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="id" class="id_matkul">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">TIDAK</button>
+											<button type="submit" class="btn btn-danger">YA</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						<form action="/dosen/addkelas" method="post">
+							<div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Tambah Matkul</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											Mata Kuliah
+											<div class="form-group">
+												<input type="text" placeholder="Nama Mata Kuliah" name="nama_matkul" class="form-control">
+											</div>
+											Kelas
+											<div class="form-group">
+												<input type="text" placeholder="Kelas" name="kelas" class="form-control">
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="id" class="id_matkul">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Tambahkan</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						
+						<form action="/TambahPeserta" method="post">
+							<div class="modal fade" id="myModalAddPeserta{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Tambah Peseta</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="form-group">
+												NRP Peserta<br>
+												<select>
+													<option value="">--Pilih Peserta--</option>
+													{% for users in results %}
+													<option value="{{users.nrp_nip}}">{{users.nama_user}}</option>
+													{% endfor %}
+												</select><br>
+												<br>Mata Kuliah<br>
+												<input type="text" placeholder="Nama Matkul" name="user" class="form-control" value="{{item.nama_matkul}}">
+												Kelas
+												<input type="text" placeholder="Nama Matkul" name="user" class="form-control" value="{{item.kelas}}">
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="id" class="id_matkul">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Tambahkan</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+						<form action="/TambahPeserta" method="post">
+							<div class="modal fade" id="myModalAddPertemuan{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Tambah Pertemuan</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="form-group">
+												Kelas
+												<input type="text" placeholder="Kelas" name="user" class="form-control" value="{{item.namm_matkul}}">
+												Pertemuan
+												<input type="text" placeholder="Pertemuan Ke-" name="user" class="form-control">
+												Waktu Awal
+												<input type="datetime-local" placeholder="Waktu Awal" name="user" class="form-control">
+												Waktu Akhir
+												<input type="datetime-local" placeholder="Waktu Akhir" name="user" class="form-control">
+												Ruangan
+												<input type="text" placeholder="Ruangan" name="user" class="form-control" >
+											</div>
+										</div>
+										<div class="modal-footer">
+											<input type="hidden" name="id" class="id_matkul">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Tambahkan</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
 						{% endfor %}
 					</tbody>
 				</table>
 			</div>
 		</div>
-		<form action="/dosen/addkelas" method="post">
-			<div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Tambah Matkul</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<div class="form-group">
-								<input type="text" placeholder="Nama Mata Kuliah" name="nama_matkul" class="form-control">
-							</div>
-
-							<div class="form-group">
-								<input type="text" placeholder="Kelas" name="kelas" class="form-control">
-							</div>
-						</div>
-						<div class="modal-footer">
-							<input type="hidden" name="id" class="id_matkul">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary">Tambahkan</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
-		<form action="/TambahPeserta" method="post">
-			<div class="modal fade" id="myModalAddPeserta" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Tambah Peseta</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<div class="form-group">
-								<input type="text" placeholder="Nama Mata Kuliah" name="matkul" class="form-control">
-								<select>--Pilih Matkul--</select>
-							</div>
-
-							<div class="form-group">
-								<input type="text" placeholder="Kelas" name="user" class="form-control">
-								<select></select>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<input type="hidden" name="id" class="id_matkul">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary">Tambahkan</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
 	</div>
 </section>
 <br>
