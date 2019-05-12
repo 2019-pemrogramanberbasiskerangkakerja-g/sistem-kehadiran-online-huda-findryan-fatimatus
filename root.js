@@ -173,7 +173,9 @@ root.post('/dosen/addkelas', function(request, response) {
 root.get('/createJadwal', function(request, response) {
  let sql = "SELECT * FROM matkul";
  let query = db.query(sql, (err, results,fields) => {
-     if(err) throw err;
+     if (error){
+      console.log(error);
+    }
          response.render('/dosen/index.njk',{results});
  });
 });
@@ -187,7 +189,9 @@ root.post('/TambahJadwal', function(request, response) {
 
  let sql = "INSERT  INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
  let query = db.query(sql, (err, results) => {
-     if(err) throw err;
+      if (error){
+      console.log(error);
+    }
      response.redirect('/dosen');
  });
 });
@@ -195,7 +199,9 @@ root.post('/TambahJadwal', function(request, response) {
 root.get('/createPeserta', function(request, response) {
  let sql = "SELECT * FROM user WHERE role_user = '2'";
  let query = db.query(sql, (err, results,fields) => {
-     if(err) throw err;
+      if (error){
+      console.log(error);
+    }
          response.render('/dosen/index.njk',{results});
  });
 });
@@ -206,7 +212,9 @@ root.post('/TambahPeserta', function(request, response) {
 
  let sql = "INSERT  INTO `daftar_peserta`(`id_matkul`,`id_user`) values ('"+matkul+"','"+user+"')";
  let query = db.query(sql, (err, results) => {
-     if(err) throw err;
+      if (error){
+      console.log(error);
+    }
      response.redirect('/dosen');
  });
 });
@@ -235,7 +243,9 @@ root.get('/mahasiswa/absen/:id_matkul', function(request, response) {
  console.log(matkul);
  let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m where m.id_matkul = '"+matkul+"'";
  let query = db.query(sql, (err, results,fields) => {
-     if(err) throw err;
+      if (error){
+      console.log(error);
+    }
          response.render('mahasiswa/absen',{results,id});
  });
 });
@@ -473,6 +483,35 @@ root.get('/rekapmahasiswasemester/:nrp/:id_semester', function (req, res) {
       res.status(200).json(results);
     }
   });
+});
+
+root.post('/apitambahjadwal', function(request, response) {
+ var matkul = request.body.matkul;
+ var pertemuan_ke = request.body.pertemuan_ke;
+ var waktu_awal = request.body.waktu_awal;
+ var waktu_akhir = request.body.waktu_akhir;
+ var ruangan = request.body.ruangan;
+
+ db.query('select id_tran_matkul from transaksi_matkul where id_matkul=? and pertemuanke=? and ruangan=?',
+   [matkul,pertemuan_ke,ruangan], function (error, results, fields) {
+    if (error){
+      console.log(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+    if (results.length > 0){
+      res.status(404).json({ error: 'Jadwal sudah ada' });
+    }else{
+     let sql1 = "INSERT  INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
+     let query1 = db.query(sql1, (err, results) => {
+       if (error){
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }else{
+        res.status(200).json({ OK: 'Jadwal berhasil ditambahkan' });
+      }
+    });
+   }
+ });
 });
 
 root.listen(3000, function() {
