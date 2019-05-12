@@ -24,13 +24,12 @@
  * Package mysql, ``` npm install mysql ```
 4. Jalankan aplikasi dengan ``` node root.js ```
 
-#### API Cek db:
-Terdapat 4 tabel user, daftar_peserta, matkul, transaksi_matkul, transaksi_user
-akses
-``` GET /tabel/(Masukan Nama Tabel) ```
-
-
 ### Berikut List Api pada Aplikasi Kehadiran Online (Safario):
+#### API Cek db:
+Terdapat 5 tabel : user, daftar_peserta, matkul, transaksi_matkul, transaksi_user
+akses
+<br/>``` GET /tabel/(Masukan Nama Tabel) ```
+<br/>
 1. absen
   ``` POST /absen/```
 <br/>sent via body: ruang, nrp
