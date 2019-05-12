@@ -57,16 +57,16 @@ sent via body: nrp, nama, password
 
 7. tambah user mhs ke mata kuliah
   ``` GET /tambahpeserta/IDMATAKULIAH/NRP ```
-ex : tambahpeserta/1/5115100022
+\n ex : tambahpeserta/1/5115100022
 
 8. tambah mata kuliah baru
   ``` POST /tambahmatkul ```
 sent via body: nama_matkul, kelas, semester
 
 9. tambah jadwal pertemuan untuk kuliah
-``` POST /tambahjadwal ```
-##### BELUM BISA - kirim jam masih eror 
-sent via body: id mata kuliah, pertemuan ke, ruang, jam masuk, jam selesai
+``` POST /apitambahjadwal ```
+sent via body: matkul, pertemuan_ke, waktu_awal, waktu_akhir, ruangan
+
 
 10. Login
 ``` POST /login ```
