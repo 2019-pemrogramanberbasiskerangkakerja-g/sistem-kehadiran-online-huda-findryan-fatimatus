@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var md5 = require('md5');
 var nunjucks  = require('nunjucks');
 var mysql      = require('mysql');
-
+var db = require("./db_config");
 var root = express();
 
 root.use(cookieParser());
@@ -20,23 +20,6 @@ root.use(session({
 root.use(bodyParser.urlencoded({extended : true}));
 root.use(bodyParser.json());
 root.use(express.static(__dirname + '/assets'));
-
-var db = mysql.createConnection({
-  host     : 'localhost', //mysql database host name
-  user     : 'root', //mysql database user name
-  password : '', //mysql database password
-  database : 'safario' //mysql database name
-});
-
-db.connect(function(err) {
-  if (err){
-    console.log('Cek your DB Connection');
-    console.log(err);
-  }else{
-    console.log('You are now connected with mysql database...');
-  }
-})
-
 
 // Apply nunjucks and add custom filter and function (for example). 
 root.set('view engine', 'njk');
