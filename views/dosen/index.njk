@@ -5,6 +5,12 @@
 <section class="hero-banner magic-ball">
 	<div class="container">
 		<div class="row align-items-center text-center text-md-left">
+			<div class="col-lg-12 col-xl-12" style="text-align: center; color: black; font-weight: bold; font-size: 20px " >
+				HALAMAN DOSEN
+			</div>
+			<div class="col-lg-12 col-xl-12" style="text-align: center; color: 	#0000CD; font-weight: bold; " >
+				{{nama}}<br>{{username}}
+			</div>
 			<div class="col-lg-10 col-xl-10 align-self-center mb-8 mb-lg-0">
 			</div>
 			<div class="col-lg-2 col-xl-2 align-self-center mb-8 mb-lg-0">
@@ -16,10 +22,11 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th scope="col">No</th>
+							<th scope="col" >No</th>
 							<th scope="col">Mata Kuliah</th>
 							<th scope="col">Kelas</th>
-							<th scope="col">Option</th>
+							<th scope="col" style="text-align: center">Editable</th>
+							<th scope="col" style= "text-align: center">Option</th>
 						</tr>
 					</thead>
 
@@ -31,11 +38,12 @@
 								<a href="">{{ item.nama_matkul }}</a>
 							</td>
 							<td>{{ item.kelas }}</td>
-							<td>
-								<button class="btn btn-warning"  href="" data-toggle="modal" data-target="#myModalAddEdit{{item.id_matkul}}">edit</button>
-								<button class="btn btn-danger" href="" data-toggle="modal" data-target="#myModalAddDelete{{item.id_matkul}}">hapus</button>
-								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPeserta{{item.id_matkul}}"">tambah peserta</button>
-								<button class="btn btn-primary  href="" data-toggle="modal" data-target="#myModalAddPertemuan{{item.id_matkul}}">tambah pertemuan</button>
+							<td style= "text-align: center"><button class="btn btn-primary"  href="" data-toggle="modal" data-target="#myModalAddPeserta{{item.id_matkul}}">Tambah Peserta</button>
+								<button class="btn btn-primary"  href="" data-toggle="modal" data-target="#myModalAddPertemuan{{item.id_matkul}}">Tambah Pertemuan</button>
+							</td>
+							<td style= "text-align: center">
+								<button class="btn btn-warning"  href="" data-toggle="modal" data-target="#myModalAddEdit{{item.id_matkul}}">Edit</button>
+								<button class="btn btn-danger" href="" data-toggle="modal" data-target="#myModalAddDelete{{item.id_matkul}}">Hapus</button>
 							</td>
 						</tr>
 						<form action="/dosen/addkelas" method="post">

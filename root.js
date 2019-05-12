@@ -145,12 +145,15 @@ root.get('/dosen', function(request, response) {
   if (request.session.role != 1) {
     response.redirect('/mahasiswa');
   }else{
+    var username = request.session.nrp_nip;
+    var nama = request.session.nama_user; 
+    var id = request.session.id_user;
     let sql = "SELECT * FROM matkul";
     let query = db.query(sql, (err, results,fields) => {
       if(err)if(err){
         console.log(err);
       }
-      response.render('dosen/index',{results});
+      response.render('dosen/index',{results,nama,id,username});
     });
   }
 });
