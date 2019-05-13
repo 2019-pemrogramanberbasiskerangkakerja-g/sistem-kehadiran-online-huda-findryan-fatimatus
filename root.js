@@ -344,7 +344,7 @@ root.get('/tambahpeserta/:id_matkul/:nrp', function (req, res) {
   var id_matkul = req.params.id_matkul;
   var nrp_nip = req.params.nrp;
 
-  db.query('SELECT * FROM matkul m, daftar_peserta d,user u WHERE m.id_matkul=d.id_matkul AND u.id_user=d.id_user AND id_matkul=? and id_user=?',
+  db.query('SELECT * FROM matkul m, daftar_peserta d,user u WHERE m.id_matkul=d.id_matkul AND u.id_user=d.id_user AND m.id_matkul=? and u.id_user=?',
    [id_matkul,nrp_nip], function (error, results, fields) {
     if (error){
       console.log(error);
