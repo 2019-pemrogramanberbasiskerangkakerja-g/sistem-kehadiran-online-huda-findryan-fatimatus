@@ -6,7 +6,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var md5 = require('md5');
 var nunjucks  = require('nunjucks');
-var mysql      = require('mysql');
+var mysql = require('mysql');
 var db = require("./db/db_config");
 var root = express();
 
@@ -73,8 +73,6 @@ root.post('/auth/login', function(request, response) {
                 // response.redirect('/mahasiswa');
                 response.redirect('/mahasiswa');
               }
-
-
             }else{
             // console.log("SALLAH");
             request.session.flashdata = "Kombinasi username dan password salah !!";
@@ -125,19 +123,36 @@ root.post('/auth/registeruser', function(request, response) {
 
 //-------------------DOSEN---------------------
 root.get('/dosen', function(request, response) {
+  var matkul=[];
+  var mahasiswa=[];
   if (request.session.role != 1) {
     response.redirect('/mahasiswa');
   }else{
     var username = request.session.nrp_nip;
     var nama = request.session.nama_user; 
     var id = request.session.id_user;
+    
     let sql = "SELECT * FROM matkul";
     let query = db.query(sql, (err, results,fields) => {
       if(err)if(err){
         console.log(err);
       }
-      response.render('dosen/index',{results,nama,id,username});
+      // console.log(results);
+      matkul = results;
+      //console.log(matkul);
+      
     });
+
+    let sql2 = "SELECT * FROM user WHERE role = '2'";
+    query = db.query(sql2, (err, results,fields) => {
+      if (err){
+        console.log(err);
+      }
+      mahasiswa = results;
+      //console.log(mahasiswa);
+      response.render('dosen/index',{matkul,mahasiswa,nama,id,username});
+    });
+    
   }
 });
 
@@ -156,11 +171,11 @@ root.post('/dosen/addkelas', function(request, response) {
 root.get('/createJadwal', function(request, response) {
  let sql = "SELECT * FROM matkul";
  let query = db.query(sql, (err, results,fields) => {
-     if (error){
-      console.log(error);
-    }
-         response.render('/dosen/index.njk',{results});
- });
+   if (error){
+    console.log(error);
+  }
+  response.render('/dosen/index.njk',{results});
+});
 });
 
 root.post('/TambahJadwal', function(request, response) {
@@ -172,21 +187,21 @@ root.post('/TambahJadwal', function(request, response) {
 
  let sql = "INSERT  INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
  let query = db.query(sql, (err, results) => {
-      if (error){
-      console.log(error);
-    }
-     response.redirect('/dosen');
- });
+  if (error){
+    console.log(error);
+  }
+  response.redirect('/dosen');
+});
 });
 
 root.get('/createPeserta', function(request, response) {
  let sql = "SELECT * FROM user WHERE role_user = '2'";
  let query = db.query(sql, (err, results,fields) => {
-      if (error){
-      console.log(error);
-    }
-         response.render('/dosen/index.njk',{results});
- });
+  if (error){
+    console.log(error);
+  }
+  response.render('/dosen/index.njk',{results});
+});
 });
 
 root.post('/TambahPeserta', function(request, response) {
@@ -195,19 +210,19 @@ root.post('/TambahPeserta', function(request, response) {
 
  let sql = "INSERT  INTO `daftar_peserta`(`id_matkul`,`id_user`) values ('"+matkul+"','"+user+"')";
  let query = db.query(sql, (err, results) => {
-      if (error){
-      console.log(error);
-    }
-     response.redirect('/dosen');
- });
+  if (error){
+    console.log(error);
+  }
+  response.redirect('/dosen');
+});
 });
 //-------------------ENDDOSEN---------------------
 
 //-------------------MAHASISWA------------------
 root.get('/mahasiswa', function(request, response) {
-    var username = request.session.nrp_nip;
-    var nama = request.session.nama_user; 
-    var id = request.session.id_user;
+  var username = request.session.nrp_nip;
+  var nama = request.session.nama_user; 
+  var id = request.session.id_user;
   //let sql = "SELECT DISTINCT matkul.nama_matkul,matkul.kelas,daftar_peserta.* FROM matkul INNER JOIN daftar_peserta ON (matkul.id_matkul = daftar_peserta.id_matkul ) where id_user = '"+id+"'";
   let sql = "SELECT m.nama_matkul,m.kelas,dp.* FROM matkul m , daftar_peserta dp where m.id_matkul = dp.id_matkul";
   let query = db.query(sql, (err, results,fields) => {
@@ -226,11 +241,11 @@ root.get('/mahasiswa/absen/:id_matkul', function(request, response) {
  console.log(matkul);
  let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m where m.id_matkul = '"+matkul+"'";
  let query = db.query(sql, (err, results,fields) => {
-      if (error){
-      console.log(error);
-    }
-         response.render('mahasiswa/absen',{results,id});
- });
+  if (error){
+    console.log(error);
+  }
+  response.render('mahasiswa/absen',{results,id});
+});
 });
 
 root.post('/mahasiswa/absensi', function(request, response) {
@@ -240,12 +255,12 @@ root.post('/mahasiswa/absensi', function(request, response) {
   var date = new Date();
 
   db.query('INSERT INTO transaksi_user (id_user,id_tran_matkul,waktu,status) values (?,?,?,?)',
-       [id,matkul,date,status], function (error, results, fields) {
-        if (error){
-          console.log(error);
-        }
-       response.redirect('/mahasiswa');
-      });
+   [id,matkul,date,status], function (error, results, fields) {
+    if (error){
+      console.log(error);
+    }
+    response.redirect('/mahasiswa');
+  });
 });
 
 //-------------------ENDMAHASISWA------------------
@@ -386,25 +401,16 @@ root.post('/absen/:ruang/:nrp', function(request, response) {
       var matkul = results[0].id_tran_matkul;
       db.query('INSERT INTO transaksi_user (id_user,id_tran_matkul,waktu,status) values (?,?,?,?)',
        [nrp_nip,matkul,date,status], function (error, results, fields) {
-          if (error){
-            console.log(error);
-            res.status(500).json({ error: 'Internal Server Error' });
-          }else{
-            res.status(200).json({ OK: 'Berhasil melakukan absensi' });
-          }
-        });
+        if (error){
+          console.log(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }else{
+          res.status(200).json({ OK: 'Berhasil melakukan absensi' });
+        }
+      });
     }
   });
 });
-
-//tambahjadwal
-// root.post('/tambahjadwal', function(request, response) {
-//  var id_matkul = request.body.id_matkul;
-//  var pertemuan_ke = request.body.pertemuan_ke;
-//  var waktu_awal = request.body.waktu_awal;
-//  var waktu_akhir = request.body.waktu_akhir;
-//  var ruangan = request.body.ruangan;
-// });
 
 //rekap kuliah per semester
 root.get('/rekappersemester/:id_matkul', function (req, res) {
@@ -484,7 +490,7 @@ root.post('/apitambahjadwal', function(request, response) {
     if (results.length > 0){
       res.status(404).json({ error: 'Jadwal sudah ada' });
     }else{
-     let sql1 = "INSERT  INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
+     let sql1 = "INSERT INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
      let query1 = db.query(sql1, (err, results) => {
        if (error){
         console.log(error);
@@ -496,6 +502,7 @@ root.post('/apitambahjadwal', function(request, response) {
    }
  });
 });
+
 
 root.listen(3000, function() {
   console.log('Listening to port:  ' + 3000);
