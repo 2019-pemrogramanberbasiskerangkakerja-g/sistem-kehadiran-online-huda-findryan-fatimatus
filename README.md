@@ -64,8 +64,8 @@ akses
 
 9. tambah jadwal pertemuan untuk kuliah
 ``` POST /apitambahjadwal ```
-<br/>sent via body: matkul, pertemuan_ke, waktu_awal, waktu_akhir, ruangan
-
+<br/>sent via body: id_matkul, pertemuan_ke, waktu_awal, waktu_akhir, ruangan
+<br/>![db](tambahjadwal.PNG)
 
 10. Login
 ``` POST /login ```
