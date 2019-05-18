@@ -53,6 +53,7 @@ akses
 6. tambah user mhs baru
   ``` POST /tambahmahasiswa ```
 <br/>sent via body: nrp, nama, password
+<br/>![db](tambahmhs.PNG)
 
 7. tambah user mhs ke mata kuliah
   ``` GET /tambahpeserta/IDMATAKULIAH/NRP ```
@@ -61,6 +62,7 @@ akses
 8. tambah mata kuliah baru
   ``` POST /tambahmatkul ```
 <br/>sent via body: nama_matkul, kelas, semester
+<br/>![db](tambahmtkl.PNG)
 
 9. tambah jadwal pertemuan untuk kuliah
 ``` POST /apitambahjadwal ```
@@ -70,3 +72,4 @@ akses
 10. Login
 ``` POST /login ```
 <br/>sent via body: nrp, password
+<br/>![db](login.PNG)
