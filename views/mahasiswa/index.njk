@@ -20,17 +20,17 @@
 					<thead>
 						<tr>
 							<th scope="col">No</th>
-							<th scope="col">Mata Kuliah</th>
-							<th scope="col">Kelas</th>
+							<th scope="col">Nama</th>
+							<th scope="col">NRP</th>
 						</tr>
 					</thead>
 
 					<tbody>
-						{% for matkul in results %}
+						{% for mahasiswa in results %}
 						<tr>
 							<!-- <th scope="row">1</th> -->
 							<td class="counterCell"> </td>
-							<td><a href="/mahasiswa/absen/{{matkul.id_matkul}}">{{ matkul.nama_matkul }}</a></td>
+							<td>{{matkul.nama_matkul }}</a></td>
 							<td>{{matkul.kelas}}</td>
 						</tr>
 

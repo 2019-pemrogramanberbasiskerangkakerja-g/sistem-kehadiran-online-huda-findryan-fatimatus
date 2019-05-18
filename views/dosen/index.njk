@@ -31,7 +31,7 @@
 					</thead>
 
 					<tbody>
-						{% for item in results %}
+						{% for item in matkul %}
 						<tr>
 							<td class="counterCell"> </td>
 							<td>
@@ -40,6 +40,7 @@
 							<td>{{ item.kelas }}</td>
 							<td style= "text-align: center"><button class="btn btn-primary"  href="" data-toggle="modal" data-target="#myModalAddPeserta{{item.id_matkul}}">Tambah Peserta</button>
 								<button class="btn btn-primary"  href="" data-toggle="modal" data-target="#myModalAddPertemuan{{item.id_matkul}}">Tambah Pertemuan</button>
+								<button class="btn btn-primary"  href="" data-toggle="modal" data-target="#Rekap{{item.id_matkul}}">Rekap</button>
 							</td>
 							<td style= "text-align: center">
 								<button class="btn btn-warning"  href="" data-toggle="modal" data-target="#myModalAddEdit{{item.id_matkul}}">Edit</button>
@@ -142,8 +143,8 @@
 												NRP Peserta<br>
 												<select>
 													<option value="">--Pilih Peserta--</option>
-													{% for users in results %}
-													<option value="{{users.nrp_nip}}">{{users.nama_user}}</option>
+													{% for users in mahasiswa %}
+													<option value="{{users.nrp_nip}}">{{users.nrp_nip}}-{{users.nama_user}}</option>
 													{% endfor %}
 												</select><br>
 												<br>Mata Kuliah<br>
@@ -194,6 +195,32 @@
 								</div>
 							</div>
 						</form>
+
+						
+						<div class="modal fade" id="Rekap{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">Pertemuan ke</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										<select onchange="location = this.value;">
+											{% for i in range(1, 17) -%}
+											<option value="/rekappertemuan/{{item.id_matkul}}/{{i}}">{{i}}</option>
+											{% endfor %}
+										</select>
+									</div>
+									<div class="modal-footer">
+										<input type="hidden" name="id" class="id_matkul">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										<button type="submit" class="btn btn-primary">Tambahkan</button>
+									</div>
+								</div>
+							</div>
+						</div>
 						{% endfor %}
 					</tbody>
 				</table>
