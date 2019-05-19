@@ -38,18 +38,22 @@ akses
 2. rekap kuliah per semester
   ``` GET /rekappersemester/IDMATAKULIAH/IDSEMESTER ```
 <br/>ex: /rekappersemester/3/4
+<br/>![db](rekappersemester.jpg)
 
 3. rekap kuliah per pertemuan
   ``` GET /rekappertemuan/IDMATAKULIAH/PERTEMUANKE ```
 <br/>ex: /rekappertemuan/4/2
+<br/>![db](rekappertemuan.jpg)
 
 4. rekap per mahasiswa per kuliah
   ``` GET /rekapmahasiswa/NRP/IDMATAKULIAH ```
 <br/>ex: /rekapmahasiswa/2147483647/3
+<br/>![db](rekapmahasiswa.jpg)
 
 5. rekap per mahasiswa per semester
   ``` GET /rekapmahasiswasemester/NRP/SEMESTER ```
 <br/>ex : rekapmahasiswasemester/2147483647/4
+<br/>![db](rekapmahasiswasemester.jpg)
 
 6. tambah user mhs baru
   ``` POST /tambahmahasiswa ```
