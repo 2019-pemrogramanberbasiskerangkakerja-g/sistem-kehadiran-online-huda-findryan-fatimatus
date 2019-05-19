@@ -413,12 +413,11 @@ root.post('/absen/:ruang/:nrp', function(request, response) {
 });
 
 //rekap kuliah per semester
-root.get('/rekappersemester/:id_matkul/:semester', function (req, res) {
+root.get('/rekappersemester/:id_matkul', function (req, res) {
   var id_matkul = req.params.id_matkul;
-  var semester = req.params.semester;
 
-  db.query('SELECT  tm.id_matkul, us.nrp_nip, us.nama_user, tu.waktu, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM matkul AS mat JOIN user AS us, transaksi_matkul AS tm, transaksi_user AS tu WHERE tu.id_user = us.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul=mat.id_matkul AND us.role =2 AND mat.id_matkul =? AND mat.semester=? ORDER BY tm.pertemuan_ke',
-   [id_matkul,semester], function (error, results, fields) {
+  db.query('SELECT  tm.id_matkul, us.nrp_nip, us.nama_user, tu.waktu, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM matkul AS mat JOIN user AS us, transaksi_matkul AS tm, transaksi_user AS tu WHERE tu.id_user = us.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul=mat.id_matkul AND us.role =2 AND mat.id_matkul =? ORDER BY tm.pertemuan_ke',
+   [id_matkul], function (error, results, fields) {
     if (error){
       console.log(error);
       res.status(500).json({ error: 'Internal Server Error' });
