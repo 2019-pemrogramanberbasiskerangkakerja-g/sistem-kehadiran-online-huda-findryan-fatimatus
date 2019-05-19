@@ -33,7 +33,7 @@ akses
 1. absen
   ``` POST /absen/```
 <br/>sent via body: ruang, nrp
-<br/>![db](absen.PNG)
+<br/>![db](absen1.PNG)
 
 2. rekap kuliah per semester
   ``` GET /rekappersemester/IDMATAKULIAH/IDSEMESTER ```
