@@ -36,8 +36,8 @@ akses
 <br/>![db](absen1.PNG)
 
 2. rekap kuliah per semester
-  ``` GET /rekappersemester/IDMATAKULIAH/IDSEMESTER ```
-<br/>ex: /rekappersemester/3/4
+  ``` GET /rekappersemester/IDMATAKULIAH ```
+<br/>ex: /rekappersemester/3
 <br/>![db](rekappersemester.jpg)
 
 3. rekap kuliah per pertemuan
