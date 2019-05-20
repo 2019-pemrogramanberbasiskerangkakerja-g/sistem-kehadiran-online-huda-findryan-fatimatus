@@ -169,6 +169,30 @@ root.post('/dosen/addkelas', function(request, response) {
   });
 });
 
+root.post('/dosen/updatekelas', function(request, response) {
+  var nama_matkul = request.body.nama_matkul;
+  var kelas = request.body.kelas;
+  var id_matkul = request.body.id_matkul;
+  sql = "UPDATE matkul SET nama_matkul='"+nama_matkul+"', kelas='"+kelas+"' WHERE id_matkul="+id_matkul;
+  query = db.query(sql, (err, results) => {
+    if(err){
+      console.log(err);
+    }
+    response.redirect('/dosen');
+  });
+});
+
+root.post('/dosen/deletekelas/:id_matkul', function(request, response) {
+  var id_matkul = request.params.id_matkul;
+  sql = "DELETE FROM matkul WHERE id_matkul="+id_matkul+"";
+  query = db.query(sql, (err, results) => {
+    if(err){
+      console.log(err);
+    }
+    response.redirect('/dosen');
+  });
+});
+
 root.get('/createJadwal', function(request, response) {
  let sql = "SELECT * FROM matkul";
  let query = db.query(sql, (err, results,fields) => {

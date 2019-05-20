@@ -50,7 +50,7 @@
 								<button class="btn btn-danger" href="" data-toggle="modal" data-target="#myModalAddDelete{{item.id_matkul}}">Hapus</button>
 							</td>
 						</tr>
-						<form action="/dosen/addkelas" method="post">
+						<form action="/dosen/updatekelas" method="post"> 
 							<div class="modal fade" id="myModalAddEdit{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
@@ -61,6 +61,10 @@
 											</button>
 										</div>
 										<div class="modal-body">
+											Kode Mata Kuliah
+											<div class="form-group">
+												<input type="text" placeholder="Nama Mata Kuliah" name="id_matkul" class="form-control" value="{{item.id_matkul}}">
+											</div>
 											Mata Kuliah
 											<div class="form-group">
 												<input type="text" placeholder="Nama Mata Kuliah" name="nama_matkul" class="form-control" value="{{item.nama_matkul}}">
@@ -79,7 +83,7 @@
 								</div>
 							</div>
 						</form>
-						<form action="/dosen/addkelas" method="post">
+						<form action="/dosen/deletekelas/{{item.id_matkul}}" method="post">
 							<div class="modal fade" id="myModalAddDelete{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
@@ -93,7 +97,7 @@
 											 <strong>Anda akan menghapus Mata Kuliah yang anda pilih ini yaitu {{item.nama_matkul}}</strong>
 										</div>
 										<div class="modal-footer">
-											<input type="hidden" name="id" class="id_matkul">
+											<input type="hidden" name="id" class="id_matkul" class="form-control id_matkul2">
 											<button type="button" class="btn btn-secondary" data-dismiss="modal">TIDAK</button>
 											<button type="submit" class="btn btn-danger">YA</button>
 										</div>
