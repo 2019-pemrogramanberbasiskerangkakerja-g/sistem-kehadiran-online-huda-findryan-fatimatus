@@ -504,6 +504,53 @@ root.post('/apitambahjadwal', function(request, response) {
  });
 });
 
+root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
+ var matkul = request.params.id_matkul;
+ var semester = request.params.semester;
+ axios.get("http://157.230.42.89:8000/rekappersemester/"+matkul+"/"+semester)
+    .then(data => {
+      data=data.data;
+      console.log(data);
+      response.render('dosen/rekap.njk',{data});
+    })
+    .catch(err => next(err));
+});
+
+root.get('/dosen/rekapmahasiswa/:nrp/:id_matkul', function(request, response,next) {
+  var nrp = request.params.nrp;
+  var matkul = request.params.id_matkul;
+  axios.get("http://157.230.42.89:8000/rekapmahasiswa/"+nrp+"/"+matkul)
+  .then(rekap => {
+      rekap=rekap.data;
+      console.log(rekap);
+      response.render('dosen/rekapmahasiswa.njk',{rekap});
+    })
+    .catch(err => next(err));
+});
+
+root.get('/dosen/rekapmahasiswasemester/:nrp/:semester', function(request, response,next) {
+  var nrp = request.params.nrp;
+  var semester = request.params.semester;
+  axios.get("http://157.230.42.89:8000/rekapmahasiswasemester/"+nrp+"/"+semester)
+  .then(mahasiswa => {
+      mahasiswa=mahasiswa.data;
+      console.log(mahasiswa);
+      response.render('dosen/rekapsemester.njk',{mahasiswa});
+    })
+    .catch(err => next(err));
+});
+
+root.get('/dosen/rekappertemuan/:id_matkul/:pertemuan_ke', function(request, response,next) {
+ var matkul = request.params.id_matkul;
+ var pertemuan = request.params.pertemuan_ke;
+ axios.get("http://157.230.42.89:8000/rekappertemuan/"+matkul+"/"+pertemuan)
+    .then(pertemuan => {
+      pertemuan=pertemuan.data;
+      console.log(pertemuan);
+      response.render('dosen/rekappertemuan.njk',{pertemuan});
+    })
+    .catch(err => next(err));
+});
 
 root.listen(3000, function() {
   console.log('Listening to port:  ' + 3000);
