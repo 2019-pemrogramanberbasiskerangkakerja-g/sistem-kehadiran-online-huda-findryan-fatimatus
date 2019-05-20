@@ -9,6 +9,7 @@ var nunjucks  = require('nunjucks');
 var mysql = require('mysql');
 var db = require("./db/db_config");
 var root = express();
+var axios = require('axios');
 
 root.use(cookieParser());
 root.use(session({
@@ -241,8 +242,8 @@ root.get('/mahasiswa/absen/:id_matkul', function(request, response) {
  console.log(matkul);
  let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m where m.id_matkul = '"+matkul+"'";
  let query = db.query(sql, (err, results,fields) => {
-  if (error){
-    console.log(error);
+  if (err){
+    console.log(err);
   }
   response.render('mahasiswa/absen',{results,id});
 });
@@ -291,7 +292,7 @@ root.get('/tabel/:nama_tabel?', function (req, res) {
 });
 
 root.post('/login', function (req, res) {
-  
+
   if (typeof(req.body.nrp) == 'undefined' || typeof(req.body.password) == 'undefined') {
     return res.status(500).json([{ err: 'Format data masukan salah' }]);
   }
@@ -316,7 +317,7 @@ root.post('/login', function (req, res) {
 
 //tambah mahasiswa
 root.post('/tambahmahasiswa', function (req, res) {
-  
+
   if (typeof(req.body.nrp) == 'undefined' || typeof(req.body.nama) == 'undefined' || typeof(req.body.password) == 'undefined') {
     return res.status(500).json([{ err: 'Format data masukan salah' }]);
   }
@@ -349,7 +350,7 @@ root.post('/tambahmahasiswa', function (req, res) {
 
 //tambah matkul
 root.post('/tambahmatkul', function (req, res) {
-  
+
   if (typeof(req.body.nama_matkul) == 'undefined' || typeof(req.body.kelas) == 'undefined' || typeof(req.body.semester) == 'undefined') {
     return res.status(500).json([{ err: 'Format data masukan salah' }]);
   }
@@ -399,7 +400,7 @@ root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
       if (results.length < 1){
         return res.status(500).json([{ err: 'ID Mata Kuliah tidak terdaftar' }]);
       }
-  });
+    });
 
   //cek peserta
   db.query("SELECT id_user FROM user WHERE nrp_nip=? and role='2'",
@@ -411,7 +412,7 @@ root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
       if (results.length < 1){
         res.status(500).json([{ err: 'NRP Tidak terdaftar' }]);
       }
-  });
+    });
 
   db.query('SELECT * from daftar_peserta d WHERE d.id_matkul=? and d.id_user=?',
     [id_matkul,nrp_nip], function (err, results, fields) {
@@ -424,14 +425,14 @@ root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
       }
       else{
         db.query('INSERT INTO daftar_peserta (id_matkul,id_user) values (?,?)',
-        [id_matkul,nrp_nip], function (err, results, fields) {
-          if (err){
-            console.log(err);
-            return res.status(500).json([{ err: 'Internal Server Error' }]);
-          }else{
-            return res.status(200).json([{ OK: 'Berhasil ditambahkan dalam kelas' }]);
-          }
-        });
+          [id_matkul,nrp_nip], function (err, results, fields) {
+            if (err){
+              console.log(err);
+              return res.status(500).json([{ err: 'Internal Server Error' }]);
+            }else{
+              return res.status(200).json([{ OK: 'Berhasil ditambahkan dalam kelas' }]);
+            }
+          });
       }
     });
 });
@@ -611,50 +612,78 @@ root.post('/apitambahjadwal', function(req, res)
 root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
  var matkul = request.params.id_matkul;
  var semester = request.params.semester;
- axios.get("http://157.230.42.89:8000/rekappersemester/"+matkul+"/"+semester)
-    .then(data => {
-      data=data.data;
-      console.log(data);
-      response.render('dosen/rekap.njk',{data});
-    })
-    .catch(err => next(err));
+ axios.get("http://157.230.42.89:3000/rekappersemester/"+matkul+"/"+semester)
+ .then(data => {
+  data=data.data;
+  console.log(data);
+  response.render('dosen/rekap.njk',{data});
+})
+ .catch(err => next(err));
 });
 
 root.get('/dosen/rekapmahasiswa/:nrp/:id_matkul', function(request, response,next) {
   var nrp = request.params.nrp;
   var matkul = request.params.id_matkul;
-  axios.get("http://157.230.42.89:8000/rekapmahasiswa/"+nrp+"/"+matkul)
+  axios.get("http://157.230.42.89:3000/rekapmahasiswa/"+nrp+"/"+matkul)
   .then(rekap => {
-      rekap=rekap.data;
-      console.log(rekap);
-      response.render('dosen/rekapmahasiswa.njk',{rekap});
-    })
-    .catch(err => next(err));
+    rekap=rekap.data;
+    console.log(rekap);
+    response.render('dosen/rekapmahasiswa.njk',{rekap});
+  })
+  .catch(err => next(err));
 });
 
 root.get('/dosen/rekapmahasiswasemester/:nrp/:semester', function(request, response,next) {
   var nrp = request.params.nrp;
   var semester = request.params.semester;
-  axios.get("http://157.230.42.89:8000/rekapmahasiswasemester/"+nrp+"/"+semester)
+  axios.get("http://157.230.42.89:3000/rekapmahasiswasemester/"+nrp+"/"+semester)
   .then(mahasiswa => {
-      mahasiswa=mahasiswa.data;
-      console.log(mahasiswa);
-      response.render('dosen/rekapsemester.njk',{mahasiswa});
-    })
-    .catch(err => next(err));
+    mahasiswa=mahasiswa.data;
+    console.log(mahasiswa);
+    response.render('dosen/rekapsemester.njk',{mahasiswa});
+  })
+  .catch(err => next(err));
 });
 
 root.get('/dosen/rekappertemuan/:id_matkul/:pertemuan_ke', function(request, response,next) {
  var matkul = request.params.id_matkul;
  var pertemuan = request.params.pertemuan_ke;
- axios.get("http://157.230.42.89:8000/rekappertemuan/"+matkul+"/"+pertemuan)
-    .then(pertemuan => {
-      pertemuan=pertemuan.data;
-      console.log(pertemuan);
-      response.render('dosen/rekappertemuan.njk',{pertemuan});
-    })
-    .catch(err => next(err));
+ axios.get("http://157.230.42.89:3000/rekappertemuan/"+matkul+"/"+pertemuan)
+ .then(pertemuan => {
+  pertemuan=pertemuan.data;
+  console.log(pertemuan);
+  response.render('dosen/rekappertemuan.njk',{pertemuan});
+})
+ .catch(err => next(err));
 });
+
+//------------------------------API POST---------------------------------------//
+root.post('/api/absen', function(request, response,next) { 
+
+  var ruangan = request.body.ruang;
+  var nrp_nip = request.body.nrp;
+  var status = "2";
+  var date = new Date();
+
+  axios({ 
+    method: 'post', 
+    url: 'http://157.230.42.89:3000/absen', 
+    data: { 
+      nrp_nip: "'"+nrp_nip+"'", 
+      ruangan: "'"+nama_ruang+"'" ,
+      status: "'"+status+"'",
+      date: "'"+waktu+"'"
+    }
+    .then(function(response) {
+      console.log(response.data)
+      response.redirect('/mahasiswa')
+    })
+    .catch(function(error) {
+      console.log(error)
+    })
+  });
+});
+
 
 root.listen(3000, function() {
   console.log('Listening to port:  ' + 3000);
