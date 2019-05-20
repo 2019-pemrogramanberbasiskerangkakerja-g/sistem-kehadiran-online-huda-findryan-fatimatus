@@ -31,8 +31,9 @@ akses
 <br/>``` GET /tabel/(Masukan Nama Tabel) ```
 <br/>
 1. Absen ``` POST /absen/```
-Berikut source code API absen:
-``` root.post('/api/absen', function(req, response,next) {
+- Berikut source code API untuk absen:
+```
+ root.post('/api/absen', function(req, response,next) {
   var nama_ruang = req.body.ruang;
   var nomorinduk = req.body.nrp;
   axios({
@@ -58,8 +59,11 @@ Berikut source code API absen:
 
         }
     });
-}); ```
+});
+```
+- Contoh:
 <br/>sent via body: ruang, nrp
+- Hasilnya:
 <br/>![db](absen1.PNG)
 
 2. rekap kuliah per semester
