@@ -266,61 +266,82 @@ root.post('/mahasiswa/absensi', function(request, response) {
 //-------------------ENDMAHASISWA------------------
 
 //-------------------API---------------------------
-root.get('/tabel/:nama_tabel', function (req, res) {
+root.get('/tabel/:nama_tabel?', function (req, res) {
   var nama_tabel = req.params.nama_tabel;
-  let sql = "SELECT * FROM "+nama_tabel+"";
+  // console.log(nama_tabel);
+  var sql;
+  if(typeof(nama_tabel) == 'undefined'){
+    sql = "SHOW tables";
+  }
+  else if(nama_tabel != "user" && nama_tabel != "daftar_peserta" && nama_tabel != "matkul" && nama_tabel != "transaksi_matkul" && nama_tabel != "transaksi_user") {
+    return res.status(500).json([{ err: 'Tidak ada tabel yang dimaksudkan' }]);
+  }
+  else{
+    sql = "SELECT * FROM "+nama_tabel+"";
+  }
 
-  db.query(sql, function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Tidak ada tabel yang dimaksudkan' });
+  db.query(sql, function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Tidak ada tabel yang dimaksudkan' }]);
     }else{
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }
   });
 });
 
 root.post('/login', function (req, res) {
+  
+  if (typeof(req.body.nrp) == 'undefined' || typeof(req.body.password) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
   var user = req.body.nrp;
   var passw = req.body.password;
   var pass = md5(passw);
+
   db.query('select id_user,nrp_nip,nama_user from user where nrp_nip=? and password=?',
-   [user,pass], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+   [user,pass], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }
     if (results.length > 0){
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }else{
-      res.status(404).json({ error: 'Username dan password tidak tepat' });
+      return res.status(404).json([{ err: 'Username dan password tidak tepat' }]);
     }
   });
 });
 
 //tambah mahasiswa
 root.post('/tambahmahasiswa', function (req, res) {
-  console.log(req.body);
+  
+  if (typeof(req.body.nrp) == 'undefined' || typeof(req.body.nama) == 'undefined' || typeof(req.body.password) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
   var user = req.body.nrp;
   var nama = req.body.nama;
   var passw = req.body.password;
   var pass  = md5(passw);
-  db.query('select id_user from user where nrp_nip=? and password=?',
-   [user,pass], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+
+  db.query('select id_user from user where nrp_nip=?',
+   [user], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }
     if (results.length > 0){
-      res.status(404).json({ error: 'NRP/NIP sudah digunakan' });
+      return res.status(404).json([{ err: 'NRP/NIP sudah digunakan' }]);
     }else{
       db.query('INSERT INTO user (nrp_nip,nama_user,password,role) values (?,?,?,?)',
-       [user,nama,pass,'2'], function (error, results, fields) {
-        if (error){
-          console.log(error);
-          res.status(500).json({ error: 'Internal Server Error' });
+       [user,nama,pass,'2'], function (err, results, fields) {
+        if (err){
+          console.log(err);
+          return res.status(500).json([{ err: 'Internal Server Error' }]);
         }
-        res.status(200).json({ OK: 'Akun dengan nrp '+user+' berhasil dibuat' });
+        return res.status(200).json([{ OK: 'Akun dengan nrp '+user+' berhasil dibuat' }]);
       });
     }
   });
@@ -328,26 +349,30 @@ root.post('/tambahmahasiswa', function (req, res) {
 
 //tambah matkul
 root.post('/tambahmatkul', function (req, res) {
-  console.log(req.body);
+  
+  if (typeof(req.body.nama_matkul) == 'undefined' || typeof(req.body.kelas) == 'undefined' || typeof(req.body.semester) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
   var nama_matkul = req.body.nama_matkul;
   var kelas = req.body.kelas;
   var semester = req.body.semester;
   db.query('select id_matkul from matkul where nama_matkul=? and kelas=?',
-   [nama_matkul,kelas], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+   [nama_matkul,kelas], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }
     if (results.length > 0){
-      res.status(404).json({ error: 'Kelas telah ditambahkan' });
+      res.status(404).json([{ err: 'Kelas sudah ada pada database' }]);
     }else{
       db.query('INSERT INTO matkul (nama_matkul,kelas,semester) values (?,?,?)',
-        [nama_matkul,kelas,semester], function (error, results, fields) {
-          if (error){
-            console.log(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+        [nama_matkul,kelas,semester], function (err, results, fields) {
+          if (err){
+            console.log(err);
+            return res.status(500).json([{ err: 'Internal Server Error' }]);
           }else{
-            res.status(200).json({ OK: 'Kelas '+nama_matkul+' '+kelas+' berhasil dibuat' });
+            return res.status(200).json([{ OK: 'Kelas '+nama_matkul+' '+kelas+' berhasil dibuat' }]);
           }
         });
     }
@@ -355,55 +380,106 @@ root.post('/tambahmatkul', function (req, res) {
 });
 
 //tambah peserta
-root.get('/tambahpeserta/:id_matkul/:nrp', function (req, res) {
+root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
+
+  if (typeof(req.params.id_matkul) == 'undefined' || typeof(req.params.nrp) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
   var id_matkul = req.params.id_matkul;
   var nrp_nip = req.params.nrp;
 
-  db.query('SELECT * FROM matkul m, daftar_peserta d,user u WHERE m.id_matkul=d.id_matkul AND u.id_user=d.id_user AND m.id_matkul=? and u.id_user=?',
-   [id_matkul,nrp_nip], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-    if (results.length > 0){
-      res.status(404).json({ error: 'Peserta '+results[0].nama_user+' telah terdaftar di Kelas' });
-    }else{
-      db.query('INSERT INTO daftar_peserta (id_matkul,id_user) values (?,?)',
-        [id_matkul,nrp_nip], function (error, results, fields) {
-          if (error){
-            console.log(error);
-            res.status(500).json({ error: 'Internal Server Error' });
+  //cek matkul
+  db.query('SELECT id_matkul FROM matkul WHERE id_matkul=?',
+    [id_matkul], function (err, results, fields) {
+      if (err){
+        console.log(err);
+        return res.status(500).json([{ err: 'Internal Server Error' }]);
+      }
+      if (results.length < 1){
+        return res.status(500).json([{ err: 'ID Mata Kuliah tidak terdaftar' }]);
+      }
+  });
+
+  //cek peserta
+  db.query("SELECT id_user FROM user WHERE nrp_nip=? and role='2'",
+    [nrp_nip], function (err, results, fields) {
+      if (err){
+        console.log(err);
+        return res.status(500).json([{ err: 'Internal Server Error' }]);
+      }
+      if (results.length < 1){
+        res.status(500).json([{ err: 'NRP Tidak terdaftar' }]);
+      }
+  });
+
+  db.query('SELECT * from daftar_peserta d WHERE d.id_matkul=? and d.id_user=?',
+    [id_matkul,nrp_nip], function (err, results, fields) {
+      if (err){
+        console.log(err);
+        return res.status(500).json([{ err: 'Internal Server Error' }]);
+      }
+      if (results.length > 0){
+        return res.status(404).json([{ err: 'Peserta '+'telah terdaftar di Kelas' }]);
+      }
+      else{
+        db.query('INSERT INTO daftar_peserta (id_matkul,id_user) values (?,?)',
+        [id_matkul,nrp_nip], function (err, results, fields) {
+          if (err){
+            console.log(err);
+            return res.status(500).json([{ err: 'Internal Server Error' }]);
           }else{
-            res.status(200).json({ OK: 'Berhasil ditambahkan dalam kelas' });
+            return res.status(200).json([{ OK: 'Berhasil ditambahkan dalam kelas' }]);
           }
         });
-    }
-  });
+      }
+    });
 });
 
 //absen
-root.post('/absen/:ruang/:nrp', function(request, response) {
-  var ruangan = request.params.ruang;
-  var nrp_nip = request.params.nrp;
+root.post('/absen', function(req, res) {
+
+  if (typeof(req.body.ruang) == 'undefined' || typeof(req.body.nrp) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
+  var ruangan = req.body.ruang;
+  var nrp_nip = req.body.nrp;
   var status = "2";
   var date = new Date();
 
-  db.query('SELECT u.nrp_nip, tm.ruangan,tm.id_tran_matkul FROM daftar_peserta d, matkul m, transaksi_matkul tm, user u WHERE m.id_matkul = d.id_matkul AND u.id_user=d.id_user AND tm.id_matkul = m.id_matkul AND u.nrp_nip=? AND tm.ruangan=?',
-   [nrp_nip,ruangan], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      response.status(500).json({ error: 'Internal Server Error' });
+  db.query('SELECT u.nrp_nip, tm.ruangan,tm.id_tran_matkul, u.id_user FROM daftar_peserta d, matkul m, transaksi_matkul tm, user u WHERE m.id_matkul = d.id_matkul AND u.id_user=d.id_user AND tm.id_matkul = m.id_matkul AND u.nrp_nip=? AND tm.ruangan=?',
+   [nrp_nip,ruangan], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }
-    if (results.length == 0 ){
-      response.status(404).json({ error: 'Peserta tidak terdaftar dalam kelas' });
+    if (results.length < 1 ){
+      return res.status(500).json([{ err: 'Peserta tidak terdaftar dalam kelas' }]);
     }else{
       console.log(results);
       var matkul = results[0].id_tran_matkul;
+      var id_user = results[0].id_user;
+
+      db.query('SELECT * FROM transaksi_user WHERE id_tran_matkul=? AND id_user=?',
+       [matkul,id_user], function (err, results, fields) {
+        if (err){
+          console.log(err);
+          return res.status(500).json([{ err: 'Gagal melakukan absensi, coba lagi' }]);
+        }else{
+          if (results.length > 0 ){
+            res.setHeader('Content-Type', 'application/json');
+            res.status(500).json([{ err: 'Peserta sudah melakukan absen' }]);
+            res.end();
+          }
+        }
+      });
+
       db.query('INSERT INTO transaksi_user (id_user,id_tran_matkul,waktu,status) values (?,?,?,?)',
-       [nrp_nip,matkul,date,status], function (error, results, fields) {
-        if (error){
-          console.log(error);
-          res.status(500).json({ error: 'Internal Server Error' });
+       [id_user,matkul,date,status], function (err, results, fields) {
+        if (err){
+          console.log(err);
+          res.status(500).json([{ err: 'Gagal melakukan absensi, coba lagi' }]);
         }else{
           res.status(200).json({ OK: 'Berhasil melakukan absensi' });
         }
@@ -413,46 +489,61 @@ root.post('/absen/:ruang/:nrp', function(request, response) {
 });
 
 //rekap kuliah per semester
-root.get('/rekappersemester/:id_matkul', function (req, res) {
+root.get('/rekappersemester/:id_matkul?/:id_semester?', function (req, res) {
+
+  if (typeof(req.params.id_matkul) == 'undefined' || typeof(req.params.id_semester) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
   var id_matkul = req.params.id_matkul;
 
-  db.query('SELECT  tm.id_matkul, us.nrp_nip, us.nama_user, tu.waktu, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM matkul AS mat JOIN user AS us, transaksi_matkul AS tm, transaksi_user AS tu WHERE tu.id_user = us.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul=mat.id_matkul AND us.role =2 AND mat.id_matkul =? ORDER BY tm.pertemuan_ke',
-   [id_matkul], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+  db.query('SELECT  tm.id_matkul, us.nrp_nip, us.nama_user, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM matkul AS mat JOIN user AS us, transaksi_matkul AS tm, transaksi_user AS tu WHERE tu.id_user = us.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul=mat.id_matkul AND us.role = 2 AND mat.id_matkul = ? AND mat.semester=? ORDER BY tm.pertemuan_ke',
+   [id_matkul,id_semester], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }else{
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }
   });
 });
 
 //rekap kuliah per pertemuan
-root.get('/rekappertemuan/:id_matkul/:pertemuan_ke', function (req, res) {
-  var id_matkul = req.params.id_matkul;
-  var pertemuan_ke = req.params.pertemuan_ke;
+root.get('/rekappertemuan/:id_matkul?/:pertemuanke?', function (req, res) {
 
-  db.query('SELECT  tm.id_matkul, us.nrp_nip, us.nama_user, tu.waktu, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM matkul AS mat JOIN user AS us, transaksi_matkul AS tm, transaksi_user AS tu WHERE tu.id_user = us.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul=mat.id_matkul AND us.role =2 AND mat.id_matkul =? AND tm.pertemuan_ke =? ORDER BY tm.pertemuan_ke ',
-   [id_matkul,pertemuan_ke], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+  if (typeof(req.params.id_matkul) == 'undefined' || typeof(req.params.pertemuanke) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
+  var id_matkul = req.params.id_matkul;
+  var pertemuanke = req.params.pertemuanke;
+
+  db.query('SELECT  tm.id_matkul, us.nrp_nip, us.nama_user, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM matkul AS mat JOIN user AS us, transaksi_matkul AS tm, transaksi_user AS tu WHERE tu.id_user = us.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul=mat.id_matkul AND us.role = 2 AND mat.id_matkul =? AND tm.pertemuan_ke =? ORDER BY tm.pertemuan_ke',
+   [id_matkul,pertemuanke], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }else{
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }
   });
 });
 
 //rekap mahasiswa per kuliah
-root.get('/rekapmahasiswa/:nrp/:id_matkul', function (req, res) {
+root.get('/rekapmahasiswa/:nrp?/:id_matkul?', function (req, res) {
+
+  if (typeof(req.params.nrp) == 'undefined' || typeof(req.params.id_matkul) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
+
   var nrp = req.params.nrp;
   var id_matkul = req.params.id_matkul;
 
-  db.query('SELECT tm.id_matkul, us.nrp_nip, us.nama_user, tu.waktu, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM user AS us JOIN transaksi_user AS tu, transaksi_matkul AS tm, matkul AS mat WHERE us.id_user = tu.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul = mat.id_matkul AND us.nrp_nip=? AND mat.id_matkul=?',
-   [nrp,id_matkul], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+  db.query('SELECT tm.id_matkul, us.nrp_nip, us.nama_user, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM user AS us JOIN transaksi_user AS tu, transaksi_matkul AS tm, matkul AS mat WHERE us.id_user = tu.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul = mat.id_matkul AND us.nrp_nip=? AND mat.id_matkul=?',
+   [nrp,id_matkul], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      res.status(500).json([{ err: 'Internal Server Error' }]);
     }else{
       res.status(200).json(results);
     }
@@ -460,50 +551,63 @@ root.get('/rekapmahasiswa/:nrp/:id_matkul', function (req, res) {
 });
 
 //rekap mahasiswa per semester
-root.get('/rekapmahasiswasemester/:nrp/:semester', function (req, res) {
+root.get('/rekapmahasiswasemester/:nrp?/:id_semester?', function (req, res) {
+  if (typeof(req.params.nrp) == 'undefined' || typeof(req.params.id_semester) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
   var nrp = req.params.nrp;
-  var semester = req.params.semester;
-  db.query('SELECT tm.id_matkul, us.nrp_nip, us.nama_user, tu.waktu, mat.semester, tm.pertemuan_ke, mat.nama_matkul, mat.kelas, tm.waktu_awal, tm.waktu_akhir, tm.ruangan, tu.status FROM user AS us JOIN transaksi_user AS tu, transaksi_matkul AS tm, matkul AS mat WHERE us.id_user = tu.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul = mat.id_matkul AND us.nrp_nip=? AND mat.semester=?',
-   [nrp,semester], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+  var id_semester = req.params.id_semester;
+  db.query('SELECT * FROM user AS us JOIN transaksi_user AS tu, transaksi_matkul AS tm, matkul AS m WHERE us.id_user = tu.id_user AND tu.id_tran_matkul = tm.id_tran_matkul AND tm.id_matkul = m.id_matkul AND us.nrp_nip=? AND m.semester=?',
+   [nrp,id_semester], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      res.status(500).json([{ err: 'Internal Server Error' }]);
     }else{
       res.status(200).json(results);
     }
   });
 });
 
+root.post('/apitambahjadwal', function(req, res) 
+{
+  if (typeof(req.body.id_matkul) == 'undefined' || typeof(req.body.pertemuan_ke) == 'undefined' || typeof(req.body.waktu_awal) == 'undefined' || typeof(req.body.waktu_akhir) == 'undefined' || typeof(req.body.ruangan) == 'undefined') {
+    return res.status(500).json([{ err: 'Format data masukan salah' }]);
+  }
 
-root.post('/apitambahjadwal', function(request, response) {
- var matkul = request.body.matkul;
- var pertemuan_ke = request.body.pertemuan_ke;
- var waktu_awal = request.body.waktu_awal;
- var waktu_akhir = request.body.waktu_akhir;
- var ruangan = request.body.ruangan;
+  var matkul = req.body.id_matkul;
+  var pertemuan_ke = req.body.pertemuan_ke;
+  var waktu_awal = req.body.waktu_awal;
+  var waktu_akhir = req.body.waktu_akhir;
+  var ruangan = req.body.ruangan;
 
- db.query('select id_tran_matkul from transaksi_matkul where id_matkul=? and pertemuanke=? and ruangan=?',
-   [matkul,pertemuan_ke,ruangan], function (error, results, fields) {
-    if (error){
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+  var cek1 = new Date(waktu_awal);
+  var cek2 = new Date(waktu_akhir);
+  if(isNaN(cek1) || isNaN(cek2)){
+    return res.status(500).json([{ err: 'Format waktu salah' }]);
+  }
+
+  db.query('select id_tran_matkul from transaksi_matkul where id_matkul=? and pertemuan_ke=? and ruangan=?',
+   [matkul,pertemuan_ke,ruangan], function (err, results, fields) {
+    if (err){
+      console.log(err);
+      return res.status(500).json([{ err: 'Internal Server Error' }]);
     }
     if (results.length > 0){
-      res.status(404).json({ error: 'Jadwal sudah ada' });
+      return res.status(404).json({ err: 'Jadwal sudah ada' });
     }else{
      let sql1 = "INSERT INTO `transaksi_matkul`(`id_matkul`,`pertemuan_ke`,`waktu_awal`,`waktu_akhir`,`ruangan`) values ('"+matkul+"','"+pertemuan_ke+"','"+waktu_awal+"','"+waktu_akhir+"','"+ruangan+"')";
      let query1 = db.query(sql1, (err, results) => {
-       if (error){
-        console.log(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+       if (err){
+        console.log(err);
+        return res.status(500).json([{ err: 'Internal Server Error' }]);
       }else{
-        res.status(200).json({ OK: 'Jadwal berhasil ditambahkan' });
+        return res.status(200).json({ OK: 'Jadwal berhasil ditambahkan' });
       }
     });
    }
  });
 });
-
+//rekapp-----------------------------------------------------------------------------------------------------
 root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
  var matkul = request.params.id_matkul;
  var semester = request.params.semester;
