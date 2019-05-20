@@ -10,6 +10,7 @@ var mysql = require('mysql');
 var db = require("./db/db_config");
 var root = express();
 var axios = require('axios');
+var FormData = require('form-data');
 
 root.use(cookieParser());
 root.use(session({
@@ -46,6 +47,13 @@ root.get('/auth', function(request, response) {
     var flash = request.session.flashdata;
   }
   response.render('auth/login.njk',{flash});
+});
+
+root.get('/dosenlogin', function(request, response) { 
+  if(request.session.flashdata){
+    var flash = request.session.flashdata;
+  }
+  response.render('auth/logindosen.njk',{flash});
 });
 
 root.post('/auth/login', function(request, response) {
@@ -238,6 +246,7 @@ root.get('/mahasiswa', function(request, response) {
 
 root.get('/mahasiswa/absen/:id_matkul', function(request, response) { 
  var id = request.session.id_user;
+ var username = request.session.nrp_nip;
  var matkul = request.params.id_matkul;
  console.log(matkul);
  let sql = "SELECT t.*, m.nama_matkul FROM transaksi_matkul t,matkul m where m.id_matkul = '"+matkul+"'";
@@ -245,7 +254,7 @@ root.get('/mahasiswa/absen/:id_matkul', function(request, response) {
   if (err){
     console.log(err);
   }
-  response.render('mahasiswa/absen',{results,id});
+  response.render('mahasiswa/absen',{results,id,username});
 });
 });
 
@@ -381,14 +390,14 @@ root.post('/tambahmatkul', function (req, res) {
 });
 
 //tambah peserta
-root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
+root.post('/tambahpeserta', function (req, res) {
 
-  if (typeof(req.params.id_matkul) == 'undefined' || typeof(req.params.nrp) == 'undefined') {
+  if (typeof(req.body.id_matkul) == 'undefined' || typeof(req.body.nrp) == 'undefined') {
     return res.status(500).json([{ err: 'Format data masukan salah' }]);
   }
 
-  var id_matkul = req.params.id_matkul;
-  var nrp_nip = req.params.nrp;
+  var id_matkul = req.body.id_matkul;
+  var nrp_nip = req.body.nrp;
 
   //cek matkul
   db.query('SELECT id_matkul FROM matkul WHERE id_matkul=?',
@@ -402,6 +411,7 @@ root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
       }
     });
 
+  var nrpbaru;
   //cek peserta
   db.query("SELECT id_user FROM user WHERE nrp_nip=? and role='2'",
     [nrp_nip], function (err, results, fields) {
@@ -411,6 +421,9 @@ root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
       }
       if (results.length < 1){
         res.status(500).json([{ err: 'NRP Tidak terdaftar' }]);
+      }else{
+        nrpbaru = results[0].id_user;
+        console.log(nrpbaru);
       }
     });
 
@@ -425,7 +438,7 @@ root.get('/tambahpeserta/:id_matkul?/:nrp?', function (req, res) {
       }
       else{
         db.query('INSERT INTO daftar_peserta (id_matkul,id_user) values (?,?)',
-          [id_matkul,nrp_nip], function (err, results, fields) {
+          [id_matkul,nrpbaru], function (err, results, fields) {
             if (err){
               console.log(err);
               return res.status(500).json([{ err: 'Internal Server Error' }]);
@@ -608,6 +621,8 @@ root.post('/apitambahjadwal', function(req, res)
    }
  });
 });
+
+
 //rekapp-----------------------------------------------------------------------------------------------------
 root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
  var matkul = request.params.id_matkul;
@@ -658,30 +673,201 @@ root.get('/dosen/rekappertemuan/:id_matkul/:pertemuan_ke', function(request, res
 });
 
 //------------------------------API POST---------------------------------------//
-root.post('/api/absen', function(request, response,next) { 
+root.post('/api/login', function(req, res,next) {
 
-  var ruangan = request.body.ruang;
-  var nrp_nip = request.body.nrp;
-  var status = "2";
-  var date = new Date();
+  var user = req.body.username;
+  var passw = req.body.password;
 
-  axios({ 
-    method: 'post', 
-    url: 'http://157.230.42.89:3000/absen', 
-    data: { 
-      nrp_nip: "'"+nrp_nip+"'", 
-      ruangan: "'"+nama_ruang+"'" ,
-      status: "'"+status+"'",
-      date: "'"+waktu+"'"
-    }
-    .then(function(response) {
-      console.log(response.data)
-      response.redirect('/mahasiswa')
-    })
-    .catch(function(error) {
-      console.log(error)
-    })
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:3000/login',
+    data: {
+      nrp: user,
+      password: passw
+    },
+    validateStatus: (status) => {
+      console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+      if(response.status == 200){
+        req.session.id_user = response.data[0].id_user;
+        req.session.nrp_nip = response.data[0].nrp_nip;
+        req.session.nama_user = response.data[0].nama_user;       
+      };
+      res.redirect('/mahasiswa');
+    });
   });
+
+root.post('/api/tambahmahasiswa', function(req, res,next) {
+  var user = req.body.username;
+  var nama = req.body.nama;
+  var passw = req.body.password;
+
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:3000/tambahmahasiswa',
+    data: {
+      nrp: user,
+      nama: nama,
+      password: passw,
+    },
+      validateStatus: (status) => {
+        console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        if(response.status == 200){
+          //bila berhasil
+          req.session.flashdata = "Akun "+nama+" berhasil dibuat";
+          res.redirect('/auth/register');
+          console.log(response.data);
+        }else if(response.status == 404){
+          req.session.flashdata = "NRP sudah digunakan";
+          res.redirect('/auth/register');
+        }else{
+          res.redirect('/auth/register');
+        }
+    });
+});
+
+root.post('/api/absen', function(req, res,next) {
+  var nama_ruang = req.body.nama_ruang;
+  var nomorinduk = req.body.nrp;
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:3000/absen',
+    data: {
+      ruang: nama_ruang,
+      nrp: nomorinduk
+    },
+      validateStatus: (status) => {
+        console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        console.log(response);
+        if(response.status == 200){
+          //bila berhasil
+          res.redirect('/mahasiswa');
+          console.log(response.data);
+        }else if(response.status == 500){
+          //mahasiswa tidak terdaftar
+          res.redirect('/mahasiswa');
+        }else{
+
+        }
+    });
+});
+
+root.post('/api/tambahpeserta', function(req, res,next) {
+  var user = req.body.user;
+  var nama = req.body.id_matkul;
+
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:3000/tambahpeserta',
+    data: {
+      nrp: user,
+      id_matkul: id_matkul
+
+    },
+      validateStatus: (status) => {
+        console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        if(response.status == 200){
+          //bila berhasil
+          //req.session.flashdata = "Akun "+nama+" berhasil dibuat";
+          res.redirect('/dosen');
+          console.log(response.data);
+        }else if(response.status == 404){
+          req.session.flashdata = "NRP sudah digunakan";
+          res.redirect('/dosen');
+        }else{
+          res.redirect('/dosen');
+        }
+    });
+});
+
+root.post('/api/tambahmatkul', function(req, res,next) {
+  var nama_matkul = req.body.nama_matkul;
+  var kelas = req.body.kelas;
+  var semester = req.body.semester;
+  console.log("masuk");
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:3000/tambahmatkul',
+    data: {
+      nama_matkul: nama_matkul,
+      kelas: kelas,
+      semester: semester
+    },
+      validateStatus: (status) => {
+        console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        if(response.status == 200){
+          //bila berhasil
+          console.log(response.data);
+          res.redirect('/dosen');
+        }else if(response.status == 404){
+          //mahasiswa tidak terdaftar
+        }else{
+
+        }
+    });
+});
+
+root.post('/api/tambahjadwal', function(req, res,next) {
+  
+  var matkul = req.body.id_matkul;
+  var pertemuan_ke = req.body.pertemuan_ke;
+  var waktu_awal = req.body.waktu_awal;
+  var waktu_akhir = req.body.waktu_akhir;
+  var ruangan = req.body.ruangan;
+  
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:3000/apitambahjadwal',
+    data: {
+      id_matkul: matkul,
+      pertemuan_ke: pertemuan_ke,
+      ruangan: ruangan,
+      waktu_awal: waktu_awal,
+      waktu_akhir: waktu_akhir
+    },
+      validateStatus: (status) => {
+        console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        console.log(response);
+        if(response.status == 200){
+          //bila berhasil
+          res.redirect('/dosen');
+          console.log(response.data);
+        }else if(response.status == 404){
+          //mahasiswa tidak terdaftar
+          console.log(response.data);
+        }else{
+
+        }
+    });
 });
 
 
