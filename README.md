@@ -30,8 +30,35 @@ Terdapat 5 tabel : user, daftar_peserta, matkul, transaksi_matkul, transaksi_use
 akses
 <br/>``` GET /tabel/(Masukan Nama Tabel) ```
 <br/>
-1. absen
-  ``` POST /absen/```
+1. Absen ``` POST /absen/```
+Berikut source code API absen:
+``` root.post('/api/absen', function(req, response,next) {
+  var nama_ruang = req.body.ruang;
+  var nomorinduk = req.body.nrp;
+  axios({
+    method: 'post',
+    url: 'http://157.230.42.89:8000/absen',
+    data: {
+      nama_ruang: nama_ruang,
+      nomorinduk: nomorinduk
+    },
+      validateStatus: (status) => {
+        console.log(status);
+        return true; // I'm always returning true, you may want to do it depending on the status received
+      },
+    }).catch(error => {
+
+    }).then(response => {
+        if(response.status == 200){
+          //bila berhasil
+          console.log(response.data);
+        }else if(response.status == 200){
+          //mahasiswa tidak terdaftar
+        }else{
+
+        }
+    });
+}); ```
 <br/>sent via body: ruang, nrp
 <br/>![db](absen1.PNG)
 
