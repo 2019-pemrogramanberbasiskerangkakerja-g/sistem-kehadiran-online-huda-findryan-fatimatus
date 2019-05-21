@@ -50,7 +50,7 @@
 								<button class="btn btn-danger" href="" data-toggle="modal" data-target="#myModalAddDelete{{item.id_matkul}}">Hapus</button>
 							</td>
 						</tr>
-						<form action="/dosen/updatekelas" method="post"> 
+						<!-- <form action="/dosen/updatekelas" method="post"> 
 							<div class="modal fade" id="myModalAddEdit{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
@@ -80,7 +80,7 @@
 										</div>
 									</div>
 								</div>
-							</form>
+							</form> -->
 							<form action="/api/tambahmatkul" method="post">
 								<div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									<div class="modal-dialog" role="document">
@@ -115,7 +115,7 @@
 								</div>
 							</div>
 						</form>
-						<form action="/dosen/deletekelas/{{item.id_matkul}}" method="post">
+						<!-- <form action="/dosen/deletekelas/{{item.id_matkul}}" method="post">
 							<div class="modal fade" id="myModalAddDelete{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
@@ -135,7 +135,7 @@
 										</div>
 									</div>
 								</div>
-							</form>
+							</form> -->
 							<form action="/api/tambahjadwal" method="post">
 								<div class="modal fade" id="myModalAddPertemuan{{item.id_matkul}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									<div class="modal-dialog" role="document">
@@ -227,17 +227,4 @@
 		</div>
 	</section>
 	<br>
-
-	<script>
-		$(function(){
-      // bind change event to select
-      $('#dynamic_select').on('change', function () {
-          var url = $(this).val(); // get selected value
-          if (url) { // require a URL
-              window.location = url; // redirect
-          }
-          return false;
-      });
-  });
-</script>
 {% endblock %}
