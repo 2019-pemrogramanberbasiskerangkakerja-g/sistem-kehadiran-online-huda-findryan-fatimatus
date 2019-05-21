@@ -755,11 +755,11 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa');
+          res.redirect('/auth/register');
         }else{
           req.session.flashdata = response.status;
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa');
+          res.redirect('/auth/register');
         }
     });
 });
