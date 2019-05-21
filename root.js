@@ -11,6 +11,7 @@ var db = require("./db/db_config");
 var root = express();
 var axios = require('axios');
 var FormData = require('form-data');
+var flash;
 
 root.use(cookieParser());
 root.use(session({
@@ -99,7 +100,7 @@ root.get('/auth/logout', function(request, response) {
 
 //----REGISTER-----------------------
 root.get('/auth/register', function(request, response) {
-  response.render('auth/register');
+  response.render('auth/register',{flash});
 });
 
 root.post('/auth/registeruser', function(request, response) {
@@ -159,7 +160,7 @@ root.get('/dosen', function(request, response) {
       }
       mahasiswa = results;
       //console.log(mahasiswa);
-      response.render('dosen/index',{matkul,mahasiswa,nama,id,username});
+      response.render('dosen/index',{matkul,mahasiswa,nama,id,username,flash});
     });
     
   }
@@ -207,7 +208,7 @@ root.get('/createJadwal', function(request, response) {
    if (error){
     console.log(error);
   }
-  response.render('/dosen/index.njk',{results});
+  response.render('/dosen/index.njk',{results,flash});
 });
 });
 
@@ -233,7 +234,7 @@ root.get('/createPeserta', function(request, response) {
   if (error){
     console.log(error);
   }
-  response.render('/dosen/index.njk',{results});
+  response.render('/dosen/index.njk',{results,flash});
 });
 });
 
@@ -263,7 +264,7 @@ root.get('/mahasiswa', function(request, response) {
       console.log(err);
     }
     // console.log(matkuls);
-    response.render('mahasiswa/index',{results,username,nama,id});
+    response.render('mahasiswa/index',{results,username,nama,id,flash});
   });
     //response.render('mahasiswa/index.njk',{username,nama});
   });
@@ -278,7 +279,7 @@ root.get('/mahasiswa/absen/:id_matkul', function(request, response) {
   if (err){
     console.log(err);
   }
-  response.render('mahasiswa/absen',{results,id,username});
+  response.render('mahasiswa/absen',{results,id,username,flash});
 });
 });
 
@@ -655,7 +656,7 @@ root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
  .then(data => {
   data=data.data;
   console.log(data);
-  response.render('dosen/rekap.njk',{data});
+  response.render('dosen/rekap.njk',{data,flash});
 })
  .catch(err => next(err));
 });
@@ -667,7 +668,7 @@ root.get('/dosen/rekapmahasiswa/:nrp/:id_matkul', function(request, response,nex
   .then(rekap => {
     rekap=rekap.data;
     console.log(rekap);
-    response.render('dosen/rekapmahasiswa.njk',{rekap});
+    response.render('dosen/rekapmahasiswa.njk',{rekap,flash});
   })
   .catch(err => next(err));
 });
@@ -679,7 +680,7 @@ root.get('/dosen/rekapmahasiswasemester/:nrp/:semester', function(request, respo
   .then(mahasiswa => {
     mahasiswa=mahasiswa.data;
     console.log(mahasiswa);
-    response.render('dosen/rekapsemester.njk',{mahasiswa});
+    response.render('dosen/rekapsemester.njk',{mahasiswa,flash});
   })
   .catch(err => next(err));
 });
@@ -691,7 +692,7 @@ root.get('/dosen/rekappertemuan/:id_matkul/:pertemuan_ke', function(request, res
  .then(pertemuan => {
   pertemuan=pertemuan.data;
   console.log(pertemuan);
-  response.render('dosen/rekappertemuan.njk',{pertemuan});
+  response.render('dosen/rekappertemuan.njk',{pertemuan,flash});
 })
  .catch(err => next(err));
 });
@@ -729,7 +730,7 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
   var user = req.body.username;
   var nama = req.body.nama;
   var passw = req.body.password;
-  var flash;
+  
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/tambahmahasiswa',
@@ -749,16 +750,16 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
           
           req.session.flashdata = "Akun berhasil dibuat";
           flash = req.session.flashdata;
-          res.render('auth/register',{flash});
+          res.redirect('/mahasiswa',{flash});
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
           flash = req.session.flashdata;
-          res.render('auth/register',{flash});
+          res.redirect('/mahasiswa',{flash});
         }else{
           req.session.flashdata = response.status;
           flash = req.session.flashdata;
-          res.render('auth/register',{flash});
+          res.redirect('/mahasiswa',{flash});
         }
     });
 });
@@ -766,7 +767,7 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
 root.post('/api/absen', function(req, res,next) {
   var nama_ruang = req.body.nama_ruang;
   var nomorinduk = req.body.nrp;
-  var flash;
+
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/absen',
@@ -803,7 +804,7 @@ root.post('/api/absen', function(req, res,next) {
 root.post('/api/tambahpeserta', function(req, res,next) {
   var user = req.body.user;
   var nama = req.body.id_matkul;
-  var flash;
+  
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/tambahpeserta',
@@ -842,7 +843,7 @@ root.post('/api/tambahmatkul', function(req, res,next) {
   var kelas = req.body.kelas;
   var semester = req.body.semester;
   console.log("masuk");
-  var flash;
+  
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/tambahmatkul',
@@ -881,7 +882,7 @@ root.post('/api/tambahjadwal', function(req, res,next) {
   var waktu_awal = req.body.waktu_awal;
   var waktu_akhir = req.body.waktu_akhir;
   var ruangan = req.body.ruangan;
-  var flash;
+  
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/apitambahjadwal',
