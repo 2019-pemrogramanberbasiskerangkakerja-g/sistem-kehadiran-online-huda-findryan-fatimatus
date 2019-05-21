@@ -177,29 +177,29 @@ root.post('/dosen/addkelas', function(request, response) {
   });
 });
 
-// root.post('/dosen/updatekelas', function(request, response) {
-//   var nama_matkul = request.body.nama_matkul;
-//   var kelas = request.body.kelas;
-//   var id_matkul = request.body.id_matkul;
-//   sql = "UPDATE matkul SET nama_matkul='"+nama_matkul+"', kelas='"+kelas+"' WHERE id_matkul="+id_matkul;
-//   query = db.query(sql, (err, results) => {
-//     if(err){
-//       console.log(err);
-//     }
-//     response.redirect('/dosen');
-//   });
-// });
+root.post('/dosen/updatekelas', function(request, response) {
+  var nama_matkul = request.body.nama_matkul;
+  var kelas = request.body.kelas;
+  var id_matkul = request.body.id_matkul;
+  sql = "UPDATE matkul SET nama_matkul='"+nama_matkul+"', kelas='"+kelas+"' WHERE id_matkul="+id_matkul;
+  query = db.query(sql, (err, results) => {
+    if(err){
+      console.log(err);
+    }
+    response.redirect('/dosen');
+  });
+});
 
-// root.post('/dosen/deletekelas/:id_matkul', function(request, response) {
-//   var id_matkul = request.params.id_matkul;
-//   sql = "DELETE FROM matkul WHERE id_matkul="+id_matkul+"";
-//   query = db.query(sql, (err, results) => {
-//     if(err){
-//       console.log(err);
-//     }
-//     response.redirect('/dosen');
-//   });
-// });
+root.post('/dosen/deletekelas/:id_matkul', function(request, response) {
+  var id_matkul = request.params.id_matkul;
+  sql = "DELETE FROM matkul WHERE id_matkul="+id_matkul+"";
+  query = db.query(sql, (err, results) => {
+    if(err){
+      console.log(err);
+    }
+    response.redirect('/dosen');
+  });
+});
 
 root.get('/createJadwal', function(request, response) {
  let sql = "SELECT * FROM matkul";
@@ -651,7 +651,7 @@ root.post('/apitambahjadwal', function(req, res)
 root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
  var matkul = request.params.id_matkul;
  var semester = request.params.semester;
- axios.get("http://157.230.42.89:3000/rekappersemester/"+matkul+"/"+semester)
+ axios.get("http://157.230.240.242:3000/rekappersemester/"+matkul)
  .then(data => {
   data=data.data;
   console.log(data);
@@ -663,7 +663,7 @@ root.get('/dosen/rekap/:id_matkul/:semester', function(request, response,next) {
 root.get('/dosen/rekapmahasiswa/:nrp/:id_matkul', function(request, response,next) {
   var nrp = request.params.nrp;
   var matkul = request.params.id_matkul;
-  axios.get("http://157.230.42.89:3000/rekapmahasiswa/"+nrp+"/"+matkul)
+  axios.get("http://157.230.240.242:3000/rekapmahasiswa/"+nrp+"/"+matkul)
   .then(rekap => {
     rekap=rekap.data;
     console.log(rekap);
@@ -675,7 +675,7 @@ root.get('/dosen/rekapmahasiswa/:nrp/:id_matkul', function(request, response,nex
 root.get('/dosen/rekapmahasiswasemester/:nrp/:semester', function(request, response,next) {
   var nrp = request.params.nrp;
   var semester = request.params.semester;
-  axios.get("http://157.230.42.89:3000/rekapmahasiswasemester/"+nrp+"/"+semester)
+  axios.get("http://157.230.240.242:3000/rekapmahasiswasemester/"+nrp+"/"+semester)
   .then(mahasiswa => {
     mahasiswa=mahasiswa.data;
     console.log(mahasiswa);
@@ -687,7 +687,7 @@ root.get('/dosen/rekapmahasiswasemester/:nrp/:semester', function(request, respo
 root.get('/dosen/rekappertemuan/:id_matkul/:pertemuan_ke', function(request, response,next) {
  var matkul = request.params.id_matkul;
  var pertemuan = request.params.pertemuan_ke;
- axios.get("http://157.230.42.89:3000/rekappertemuan/"+matkul+"/"+pertemuan)
+ axios.get("http://157.230.240.242:3000/rekappertemuan/"+matkul+"/"+pertemuan)
  .then(pertemuan => {
   pertemuan=pertemuan.data;
   console.log(pertemuan);
@@ -732,7 +732,7 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
 
   axios({
     method: 'post',
-    url: 'http://157.230.42.89:3000/tambahmahasiswa',
+    url: 'http://157.230.240.242:3000/tambahmahasiswa',
     data: {
       nrp: user,
       nama: nama,
@@ -764,7 +764,7 @@ root.post('/api/absen', function(req, res,next) {
   var nomorinduk = req.body.nrp;
   axios({
     method: 'post',
-    url: 'http://157.230.42.89:3000/absen',
+    url: 'http://157.230.240.242:3000/absen',
     data: {
       ruang: nama_ruang,
       nrp: nomorinduk
@@ -796,7 +796,7 @@ root.post('/api/tambahpeserta', function(req, res,next) {
 
   axios({
     method: 'post',
-    url: 'http://157.230.42.89:3000/tambahpeserta',
+    url: 'http://157.230.240.242:3000/tambahpeserta',
     data: {
       nrp: user,
       id_matkul: id_matkul
@@ -830,7 +830,7 @@ root.post('/api/tambahmatkul', function(req, res,next) {
   console.log("masuk");
   axios({
     method: 'post',
-    url: 'http://157.230.42.89:3000/tambahmatkul',
+    url: 'http://157.230.240.242:3000/tambahmatkul',
     data: {
       nama_matkul: nama_matkul,
       kelas: kelas,
@@ -865,13 +865,13 @@ root.post('/api/tambahjadwal', function(req, res,next) {
   
   axios({
     method: 'post',
-    url: 'http://157.230.42.89:3000/apitambahjadwal',
+    url: 'http://157.230.240.242:3000/apitambahjadwal',
     data: {
       id_matkul: matkul,
       pertemuan_ke: pertemuan_ke,
-      ruangan: ruangan,
-      waktu_awal: waktu_awal,
-      waktu_akhir: waktu_akhir
+      nama_ruang: ruangan,
+      jam_masuk: waktu_awal,
+      jam_selesai: waktu_akhir
     },
       validateStatus: (status) => {
         console.log(status);
