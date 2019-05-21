@@ -750,16 +750,16 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
           
           req.session.flashdata = "Akun berhasil dibuat";
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa',{flash});
+          res.redirect('/mahasiswa');
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa',{flash});
+          res.redirect('/mahasiswa');
         }else{
           req.session.flashdata = response.status;
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa',{flash});
+          res.redirect('/mahasiswa');
         }
     });
 });
@@ -787,16 +787,16 @@ root.post('/api/absen', function(req, res,next) {
           //bila berhasil
           req.session.flashdata = "Absen berhasil";
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa',{flash});
+          res.redirect('/mahasiswa');
           console.log(response.data);
         }else if(response.status == 500){
           req.session.flashdata = "Absen gagal";
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa',{flash});
+          res.redirect('/mahasiswa');
         }else{
           req.session.flashdata = "Absen gagal";
           flash = req.session.flashdata;
-          res.redirect('/mahasiswa',{flash});
+          res.redirect('/mahasiswa');
         }
     });
 });
@@ -824,16 +824,16 @@ root.post('/api/tambahpeserta', function(req, res,next) {
           //bila berhasil
           req.session.flashdata = "Akun berhasil dibuat";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
         }else{
           req.session.flashdata = "NRP sudah digunakan";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
         }
     });
 });
@@ -862,15 +862,15 @@ root.post('/api/tambahmatkul', function(req, res,next) {
         if(response.status == 200){
           req.session.flashdata = "Matkul berhasil";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
         }else if(response.status == 404){
           req.session.flashdata = "Matkul gagal ditambahkan";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
         }else{
           req.session.flashdata = "Matkul gagal ditambahkan";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
         }
     });
 });
@@ -904,17 +904,17 @@ root.post('/api/tambahjadwal', function(req, res,next) {
         if(response.status == 200){
           req.session.flashdata = " Jadwal Matkul berhasil";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = " Jadwal Matkul gagal";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
           console.log(response.data);
         }else{
           req.session.flashdata = " Jadwal Matkul gagal";
           flash = req.session.flashdata;
-          res.redirect('/dosen',{flash});
+          res.redirect('/dosen');
         }
     });
 });
