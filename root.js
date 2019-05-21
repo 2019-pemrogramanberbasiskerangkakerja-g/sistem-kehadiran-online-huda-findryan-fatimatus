@@ -729,7 +729,7 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
   var user = req.body.username;
   var nama = req.body.nama;
   var passw = req.body.password;
-
+  var flash;
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/tambahmahasiswa',
@@ -746,15 +746,19 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
 
     }).then(response => {
         if(response.status == 200){
-          //bila berhasil
-          req.session.flashdata = "Akun "+nama+" berhasil dibuat";
-          res.redirect('/auth/register');
+          
+          req.session.flashdata = "Akun berhasil dibuat";
+          flash = req.session.flashdata;
+          res.redirect('/auth/register',{flash});
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
-          res.redirect('/auth/register');
+          flash = req.session.flashdata;
+          res.redirect('/auth/register',{flash});
         }else{
-          res.redirect('/auth/register');
+          req.session.flashdata = response.status;
+          flash = req.session.flashdata;
+          res.redirect('/auth/register',{flash});
         }
     });
 });
@@ -762,6 +766,7 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
 root.post('/api/absen', function(req, res,next) {
   var nama_ruang = req.body.nama_ruang;
   var nomorinduk = req.body.nrp;
+  var flash;
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/absen',
@@ -779,13 +784,18 @@ root.post('/api/absen', function(req, res,next) {
         console.log(response);
         if(response.status == 200){
           //bila berhasil
-          res.redirect('/mahasiswa');
+          req.session.flashdata = "Absen berhasil";
+          flash = req.session.flashdata;
+          res.redirect('/mahasiswa',{flash});
           console.log(response.data);
         }else if(response.status == 500){
-          //mahasiswa tidak terdaftar
-          res.redirect('/mahasiswa');
+          req.session.flashdata = "Absen gagal";
+          flash = req.session.flashdata;
+          res.redirect('/mahasiswa',{flash});
         }else{
-
+          req.session.flashdata = "Absen gagal";
+          flash = req.session.flashdata;
+          res.redirect('/mahasiswa',{flash});
         }
     });
 });
@@ -793,7 +803,7 @@ root.post('/api/absen', function(req, res,next) {
 root.post('/api/tambahpeserta', function(req, res,next) {
   var user = req.body.user;
   var nama = req.body.id_matkul;
-
+  var flash;
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/tambahpeserta',
@@ -811,14 +821,18 @@ root.post('/api/tambahpeserta', function(req, res,next) {
     }).then(response => {
         if(response.status == 200){
           //bila berhasil
-          //req.session.flashdata = "Akun "+nama+" berhasil dibuat";
-          res.redirect('/dosen');
+          req.session.flashdata = "Akun berhasil dibuat";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
-          res.redirect('/dosen');
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
         }else{
-          res.redirect('/dosen');
+          req.session.flashdata = "NRP sudah digunakan";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
         }
     });
 });
@@ -828,6 +842,7 @@ root.post('/api/tambahmatkul', function(req, res,next) {
   var kelas = req.body.kelas;
   var semester = req.body.semester;
   console.log("masuk");
+  var flash;
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/tambahmatkul',
@@ -844,13 +859,17 @@ root.post('/api/tambahmatkul', function(req, res,next) {
 
     }).then(response => {
         if(response.status == 200){
-          //bila berhasil
-          console.log(response.data);
-          res.redirect('/dosen');
+          req.session.flashdata = "Matkul berhasil";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
         }else if(response.status == 404){
-          //mahasiswa tidak terdaftar
+          req.session.flashdata = "Matkul gagal ditambahkan";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
         }else{
-
+          req.session.flashdata = "Matkul gagal ditambahkan";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
         }
     });
 });
@@ -862,7 +881,7 @@ root.post('/api/tambahjadwal', function(req, res,next) {
   var waktu_awal = req.body.waktu_awal;
   var waktu_akhir = req.body.waktu_akhir;
   var ruangan = req.body.ruangan;
-  
+  var flash;
   axios({
     method: 'post',
     url: 'http://157.230.240.242:3000/apitambahjadwal',
@@ -882,14 +901,19 @@ root.post('/api/tambahjadwal', function(req, res,next) {
     }).then(response => {
         console.log(response);
         if(response.status == 200){
-          //bila berhasil
-          res.redirect('/dosen');
+          req.session.flashdata = " Jadwal Matkul berhasil";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
           console.log(response.data);
         }else if(response.status == 404){
-          //mahasiswa tidak terdaftar
+          req.session.flashdata = " Jadwal Matkul gagal";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
           console.log(response.data);
         }else{
-
+          req.session.flashdata = " Jadwal Matkul gagal";
+          flash = req.session.flashdata;
+          res.redirect('/dosen',{flash});
         }
     });
 });

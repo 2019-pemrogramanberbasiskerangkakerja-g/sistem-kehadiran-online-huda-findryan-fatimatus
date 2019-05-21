@@ -10,7 +10,9 @@
 			</div>
 			<div class="col-lg-10 col-xl-10 align-self-center mb-8 mb-lg-0">
 			</div>
-
+			{% if flash %}
+              <button class="btn btn-danger">{{ flash }}</button>
+            {% endif %}
 			<br>
 			<br>
 			<div class="col-lg-12 col-xl-12 align-self-center mb-2 mb-lg-0">

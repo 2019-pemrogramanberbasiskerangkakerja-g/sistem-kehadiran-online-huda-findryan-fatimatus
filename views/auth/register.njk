@@ -33,6 +33,9 @@
                 <option value="2">Mahasiswa</option>
               </select>
             </div>
+            {% if flash %}
+              <button class="btn btn-danger">{{ flash }}</button>
+            {% endif %}
             <div class="form-group">
               <button class="button border-0 mt-3" type="submit">Register</button>
             </div>
