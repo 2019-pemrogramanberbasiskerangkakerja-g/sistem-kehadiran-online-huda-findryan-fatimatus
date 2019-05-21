@@ -749,16 +749,16 @@ root.post('/api/tambahmahasiswa', function(req, res,next) {
           
           req.session.flashdata = "Akun berhasil dibuat";
           flash = req.session.flashdata;
-          res.redirect('/auth/register',{flash});
+          res.render('/auth/register',{flash});
           console.log(response.data);
         }else if(response.status == 404){
           req.session.flashdata = "NRP sudah digunakan";
           flash = req.session.flashdata;
-          res.redirect('/auth/register',{flash});
+          res.render('/auth/register',{flash});
         }else{
           req.session.flashdata = response.status;
           flash = req.session.flashdata;
-          res.redirect('/auth/register',{flash});
+          res.render('/auth/register',{flash});
         }
     });
 });
