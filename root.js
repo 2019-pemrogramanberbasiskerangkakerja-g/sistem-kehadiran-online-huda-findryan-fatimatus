@@ -810,7 +810,7 @@ root.post('/api/tambahpeserta', function(req, res,next) {
     url: 'http://157.230.240.242:3000/tambahpeserta',
     data: {
       nrp: user,
-      id_matkul: id_matkul
+      id_matkul: nama
 
     },
       validateStatus: (status) => {
